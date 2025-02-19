@@ -19,7 +19,7 @@ export default function Navbar() {
 
         <div className='flex gap-6'>
           <Link
-            href='/about'
+            href='/aboutUs'
             className='px-6 py-3 rounded-2xl bg-blue-400 text-black font-semibold 
                      hover:bg-blue-500  transition-all duration-200 shadow-md text-xl'
           >
