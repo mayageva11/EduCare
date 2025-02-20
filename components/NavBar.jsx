@@ -5,12 +5,12 @@ import logoImage from '../assets/logo.png';
 
 export default function Navbar() {
   return (
-    <nav className='w-full bg-white py-4 mb-8 shadow-lg'>
+    <nav className='w-full bg-white py-4 mb-8 shadow-lg' dir='rtl'>
       <div className='max-w-7xl mx-auto px-6 flex justify-between items-center'>
         <div className='flex items-center space-x-2'>
           <Image
             src={logoImage}
-            alt='EduCare Logo'
+            alt='EduCare לוגו'
             width={256}
             height={120}
             className='h-16 w-auto'
@@ -20,17 +20,17 @@ export default function Navbar() {
         <div className='flex gap-6'>
           <Link
             href='/aboutUs'
-            className='px-6 py-3 rounded-2xl bg-blue-400 text-black font-semibold 
-                     hover:bg-blue-500  transition-all duration-200 shadow-md text-xl'
+            className='px-8 py-3 rounded-xl bg-blue-400 text-black font-semibold 
+                      hover:bg-blue-500 transition-all duration-200 shadow-lg'
           >
-            About Us
+            אודות
           </Link>
           <Link
             href='/pricing'
-            className='px-6 py-3 rounded-2xl bg-blue-400 text-black font-semibold 
-                     hover:bg-blue-500 transition-all duration-200 shadow-md text-xl'
+            className='px-8 py-3 rounded-xl bg-blue-400 text-black font-semibold 
+                      hover:bg-blue-500 transition-all duration-200 shadow-lg'
           >
-            Pricing
+            מחירים
           </Link>
         </div>
       </div>

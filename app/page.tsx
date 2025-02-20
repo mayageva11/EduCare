@@ -21,23 +21,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className='min-h-screen bg-gray-100'>
+    <div className='min-h-screen bg-gray-100' dir='rtl'>
       <Navbar />
 
       <div className='container mx-auto px-4 flex justify-center items-center min-h-[calc(100vh-12rem)]'>
         <div className='w-full max-w-md mb-8 bg-white rounded-xl shadow-xl p-8 space-y-8'>
-          <h1 className='text-3xl font-bold text-center text-black'>
-            Welcome Back
-          </h1>
+          {/* <h1 className='text-3xl font-bold text-center text-black'>
+            ברוכים השבים
+          </h1> */}
 
           {/* Logo Below Welcome Back */}
           <div className='flex justify-center items-center mb-8'>
             <Image
               src={logoImage}
-              alt='EduCare Logo'
+              alt='EduCare לוגו'
               width={300}
               height={120}
-              className='h-32 w-auto' // Increased to h-32
+              className='h-32 w-auto'
             />
           </div>
 
@@ -47,7 +47,7 @@ export default function LoginPage() {
                 htmlFor='email'
                 className='block text-lg font-medium text-black mb-2'
               >
-                Email Address
+                כתובת אימייל
               </label>
               <input
                 id='email'
@@ -56,8 +56,8 @@ export default function LoginPage() {
                 onChange={e => setEmail(e.target.value)}
                 className='w-full px-4 py-3 rounded-lg border-2 border-blue-400 
                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                         transition-all duration-200 text-lg text-black'
-                placeholder='Enter your email'
+                         transition-all duration-200 text-lg text-black text-right'
+                placeholder='הכנס את האימייל שלך'
                 required
               />
             </div>
@@ -67,7 +67,7 @@ export default function LoginPage() {
                 htmlFor='password'
                 className='block text-lg font-medium text-black mb-2'
               >
-                Password
+                סיסמה
               </label>
               <input
                 id='password'
@@ -76,8 +76,8 @@ export default function LoginPage() {
                 onChange={e => setPassword(e.target.value)}
                 className='w-full px-4 py-3 rounded-lg border-2 border-blue-400 
                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                         transition-all duration-200 text-lg text-black'
-                placeholder='Enter your password'
+                         transition-all duration-200 text-lg text-black text-right'
+                placeholder='הכנס את הסיסמה שלך'
                 required
               />
             </div>
@@ -89,20 +89,20 @@ export default function LoginPage() {
              transform hover:scale-[1.02] transition-all duration-200
              mx-auto block'
             >
-              Submit
+              התחבר
             </button>
           </form>
 
           <div className='text-center pt-4'>
             <p className='text-black text-lg'>
-              New here?{' '}
+              חדש כאן?{' '}
               <Link
                 href='/register'
                 className='text-black font-bold hover:underline'
               >
-                Click here
+                לחץ כאן
               </Link>{' '}
-              to register
+              להרשמה
             </p>
           </div>
         </div>
