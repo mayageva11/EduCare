@@ -5,41 +5,31 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '../components/NavBar';
 import logoImage from '../assets/logo.png';
+import { authService } from '@/services/authService';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Modify your handleSubmit function in the LoginPage component
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
 
-    const data = await response.json();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
 
-    if (response.ok) {
-      // Login successful
-      console.log('Login successful:', data);
-      // Redirect to dashboard or home page
-      window.location.href = '/pricing'; // or use Next.js router
-    } else {
-      // Handle login error
-      console.error('Login failed:', data.error);
-      // Show error message to user
-      alert(data.error);
+    try {
+      const result = await authService.login({ email, password });
+      console.log('Login successful:', result);
+      window.location.href = '/pricing';
+    } catch (error) {
+      console.error('Login error:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred during login');
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    alert('An error occurred during login');
-  }
-};
+  };
 
   return (
     <div className='min-h-screen bg-gray-100' dir='rtl'>
