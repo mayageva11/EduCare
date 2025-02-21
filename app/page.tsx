@@ -10,15 +10,36 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      // Add your login logic here
-      console.log('Login attempt:', { email, password });
-    } catch (error) {
-      console.error('Login error:', error);
+  // Modify your handleSubmit function in the LoginPage component
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Login successful
+      console.log('Login successful:', data);
+      // Redirect to dashboard or home page
+      window.location.href = '/pricing'; // or use Next.js router
+    } else {
+      // Handle login error
+      console.error('Login failed:', data.error);
+      // Show error message to user
+      alert(data.error);
     }
-  };
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('An error occurred during login');
+  }
+};
 
   return (
     <div className='min-h-screen bg-gray-100' dir='rtl'>

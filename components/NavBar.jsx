@@ -32,6 +32,13 @@ export default function Navbar() {
           >
             מחירים
           </Link>
+          <Link
+            href='/signIn'
+            className='px-8 py-3 rounded-xl bg-blue-400 text-black font-semibold 
+                      hover:bg-blue-500 transition-all duration-200 shadow-lg'
+          >
+            התחברות
+          </Link>
         </div>
       </div>
     </nav>
