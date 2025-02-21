@@ -26,10 +26,6 @@ export default function LoginPage() {
 
       <div className='container mx-auto px-4 flex justify-center items-center min-h-[calc(100vh-12rem)]'>
         <div className='w-full max-w-md mb-8 bg-white rounded-xl shadow-xl p-8 space-y-8'>
-          {/* <h1 className='text-3xl font-bold text-center text-black'>
-            ברוכים השבים
-          </h1> */}
-
           {/* Logo Below Welcome Back */}
           <div className='flex justify-center items-center mb-8'>
             <Image
@@ -97,7 +93,7 @@ export default function LoginPage() {
             <p className='text-black text-lg'>
               חדש כאן?{' '}
               <Link
-                href='/register'
+                href='/signUp'
                 className='text-black font-bold hover:underline'
               >
                 לחץ כאן
