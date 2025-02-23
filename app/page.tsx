@@ -5,12 +5,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '../components/NavBar';
 import logoImage from '../assets/logo.png';
+import { authService } from '@/services/authService';
 import Button from '../components/Button';
 import Input from '@/components/Input';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
   const navLinks = [
     { href: '/aboutUs', label: 'אודות' },
     { href: '/pricing', label: 'מחירים' }
@@ -18,11 +23,18 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
     try {
-      // Add your login logic here
-      console.log('Login attempt:', { email, password });
+      const result = await authService.login({ email, password });
+      console.log('Login successful:', result);
+      window.location.href = '/pricing';
     } catch (error) {
       console.error('Login error:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred during login');
+    } finally {
+      setIsLoading(false);
     }
   };
 
