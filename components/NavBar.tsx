@@ -33,18 +33,8 @@ export default function Navbar({ links }: NavbarProps) {
               href={link.href}
               className='px-8 py-3 rounded-xl bg-blue-400 text-black font-semibold 
                       hover:bg-blue-500 transition-all duration-200 shadow-lg'
-          >
-            אודות
-          </Link>
-          <Link
-            href='/pricing'
-            className='px-8 py-3 rounded-xl bg-blue-400 text-black font-semibold 
-                      hover:bg-blue-500 transition-all duration-200 shadow-lg'
-          >
-            מחירים
-          </Link>
-          <Link
-              {link.label} >
+            >
+              {link.label}
             </Link>
           ))}
         </div>
