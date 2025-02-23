@@ -1,43 +1,17 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
-import logoImage from '../../assets/logo.png';
+import Navbar from '../../components/NavBar';
 
 export default function AboutUsPage() {
+  const navLinks = [
+    { href: '/pricing', label: 'מחירים' },
+    { href: '/', label: 'התחברות' }
+  ];
   return (
     <div dir='rtl'>
       {/* Navigation */}
-      <nav className='w-full bg-white py-4 mb-8 shadow-lg' dir='rtl'>
-        <div className='max-w-7xl mx-auto px-6 flex justify-between items-center'>
-          <div className='flex items-center space-x-2'>
-            <Image
-              src={logoImage}
-              alt='EduCare לוגו'
-              width={300}
-              height={120}
-              className='h-16 w-auto'
-            />
-          </div>
-
-          <div className='flex gap-6'>
-            <Link
-              href='/pricing'
-              className='px-8 py-3 rounded-xl bg-blue-400 text-black font-semibold 
-                      hover:bg-blue-500 transition-all duration-200 shadow-lg'
-            >
-              מחירים
-            </Link>
-            <Link
-              href='/'
-              className='px-8 py-3 rounded-xl bg-blue-400 text-black font-semibold 
-                      hover:bg-blue-500 transition-all duration-200 shadow-lg'
-            >
-              התחברות
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar links={navLinks} />
 
       {/* Hero Section */}
       <div className='bg-gradient-to-r from-blue-500 to-blue-600 text-white py-20 mb-12'>
@@ -136,7 +110,7 @@ export default function AboutUsPage() {
               תהליכי העבודה שלהם.
             </p>
             <Link
-              href='/register'
+              href='/signUp'
               className='inline-block px-10 py-4 bg-white text-blue-600 rounded-xl text-xl 
                         font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 
                         transition-all duration-200'

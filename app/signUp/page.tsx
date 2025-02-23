@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import logoImage from '../../assets/logo.png';
-import { User } from '@/types/user'; // Import the interface
+import { User } from '@/types/user';
+import Button from '../../components/Button';
+import Input from '@/components/Input';
+import Navbar from '../../components/NavBar';
 
 export default function SignUpPage() {
+  const navLinks = [
+    { href: '/aboutUs', label: 'אודות' },
+    { href: '/', label: 'התחברות' }
+  ];
   const [formData, setFormData] = useState<User>({
     firstName: '',
     lastName: '',
@@ -46,36 +50,7 @@ export default function SignUpPage() {
   return (
     <>
       {/* Navigation */}
-      <nav className='w-full bg-white py-4 mb-8 shadow-lg' dir='rtl'>
-        <div className='max-w-7xl mx-auto px-6 flex justify-between items-center'>
-          <div className='flex items-center space-x-2'>
-            <Image
-              src={logoImage}
-              alt='EduCare לוגו'
-              width={300}
-              height={120}
-              className='h-16 w-auto'
-            />
-          </div>
-
-          <div className='flex gap-6'>
-            <Link
-              href='/aboutUs'
-              className='px-8 py-3 rounded-xl bg-blue-400 text-black font-semibold 
-                      hover:bg-blue-500 transition-all duration-200 shadow-lg'
-            >
-              אודות
-            </Link>
-            <Link
-              href='/'
-              className='px-8 py-3 rounded-xl  bg-blue-400 text-black font-semibold 
-                      hover:bg-blue-500 transition-all duration-200 shadow-lg'
-            >
-              התחברות
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar links={navLinks} />
 
       {/* Main Content */}
       <div className='container mx-auto px-4 py-8'>
@@ -87,56 +62,33 @@ export default function SignUpPage() {
           <form onSubmit={handleSubmit} className='space-y-6'>
             <div className='grid md:grid-cols-2 gap-6'>
               {/* שם פרטי */}
-              <div>
-                <label className='block text-lg font-medium text-gray-700 mb-2'>
-                  שם פרטי
-                </label>
-                <input
-                  type='text'
-                  name='firstName'
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  className='w-full px-4 py-3 rounded-lg border-2 border-blue-400 
-                           focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                           transition-all duration-200 text-lg'
-                  required
-                />
-              </div>
+              <Input
+                id='firstName'
+                label='שם פרטי'
+                value={formData.firstName}
+                onChange={handleInputChange}
+                required
+              />
 
               {/* שם משפחה */}
-              <div>
-                <label className='block text-lg font-medium text-gray-700 mb-2'>
-                  שם משפחה
-                </label>
-                <input
-                  type='text'
-                  name='lastName'
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className='w-full px-4 py-3 rounded-lg border-2 border-blue-400 
-                           focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                           transition-all duration-200 text-lg'
-                  required
-                />
-              </div>
-            </div>
-
-            {/* מייל */}
-            <div>
-              <label className='block text-lg font-medium text-gray-700 mb-2'>
-                כתובת מייל
-              </label>
-              <input
-                type='email'
-                name='email'
-                value={formData.email}
+              <Input
+                id='lastName'
+                label='שם משפחה'
+                value={formData.lastName}
                 onChange={handleInputChange}
-                className='w-full px-4 py-3 rounded-lg border-2 border-blue-400 
-                         focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                         transition-all duration-200 text-lg'
                 required
               />
             </div>
+
+            {/* מייל */}
+            <Input
+              id='email'
+              type='email'
+              label='כתובת מייל'
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
 
             {/* העלאת תעודה */}
             <div>
@@ -144,7 +96,7 @@ export default function SignUpPage() {
                 תעודת יועץ חינוכי 📄
               </label>
               <p className='text-gray-600 mb-3'>
-                נא להעלות את תעודת היועץ החינוכי ממשרד החינוך
+                נא להעלות את רישיון היעוץ ממשרד החינוך
               </p>
               <div className='flex items-center gap-4'>
                 <label
@@ -170,49 +122,28 @@ export default function SignUpPage() {
             </div>
 
             {/* סיסמא */}
-            <div>
-              <label className='block text-lg font-medium text-gray-700 mb-2'>
-                סיסמא
-              </label>
-              <input
-                type='password'
-                name='password'
-                value={formData.password}
-                onChange={handleInputChange}
-                className='w-full px-4 py-3 rounded-lg border-2 border-blue-400 
-                         focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                         transition-all duration-200 text-lg'
-                required
-              />
-            </div>
+            <Input
+              id='password'
+              type='password'
+              label='סיסמא'
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
 
             {/* אימות סיסמא */}
-            <div>
-              <label className='block text-lg font-medium text-gray-700 mb-2'>
-                אימות סיסמא
-              </label>
-              <input
-                type='password'
-                name='confirmPassword'
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className='w-full px-4 py-3 rounded-lg border-2 border-blue-400 
-                         focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                         transition-all duration-200 text-lg'
-                required
-              />
-            </div>
+            <Input
+              id='confirmPassword'
+              type='password'
+              label='אימות סיסמא'
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              required
+            />
 
             {/* כפתור שליחה */}
             <div className='flex justify-center pt-4'>
-              <button
-                type='submit'
-                className='w-52 py-4 px-6 bg-blue-400 text-black rounded-2xl 
-                         font-bold text-xl shadow-lg hover:bg-blue-500 
-                         transform hover:scale-[1.02] transition-all duration-200'
-              >
-                הרשמה
-              </button>
+              <Button type='submit'>הרשמה</Button>
             </div>
           </form>
         </div>
