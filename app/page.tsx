@@ -29,7 +29,7 @@ export default function LoginPage() {
     try {
       const result = await authService.login({ email, password });
       console.log('Login successful:', result);
-      window.location.href = '/pricing';
+      window.location.href = '/home';
     } catch (error) {
       console.error('Login error:', error);
       setError(
