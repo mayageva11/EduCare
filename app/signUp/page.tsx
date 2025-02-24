@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { User } from '@/types/user';
+import { User } from '@/types/users';
 import Button from '../../components/Button';
 import Input from '@/components/Input';
 import Navbar from '../../components/NavBar';
+import { authService } from '@/services/authService';
 
 export default function SignUpPage() {
   const navLinks = [
@@ -40,10 +41,36 @@ export default function SignUpPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Add your signup logic here
-      console.log('Form submitted:', formData);
-    } catch (error) {
+      // Validate form data
+      if (
+        !formData.firstName ||
+        !formData.lastName ||
+        !formData.email ||
+        !formData.password ||
+        !formData.confirmPassword ||
+        !formData.certificate
+      ) {
+        alert('כל השדות הינם חובה');
+        return;
+      }
+
+      // Validate password match
+      if (formData.password !== formData.confirmPassword) {
+        alert('הסיסמאות אינן תואמות');
+        return;
+      }
+
+      // Use auth service to register
+      const result = await authService.register(formData);
+
+      // Handle successful response
+      alert(result.message || 'נרשמת בהצלחה! החשבון שלך יאושר בקרוב');
+
+      // Redirect to login page
+      window.location.href = '/';
+    } catch (error: any) {
       console.error('Signup error:', error);
+      alert(error.message || 'אירעה שגיאה בתהליך ההרשמה');
     }
   };
 
@@ -64,6 +91,7 @@ export default function SignUpPage() {
               {/* שם פרטי */}
               <Input
                 id='firstName'
+                name='firstName'
                 label='שם פרטי'
                 value={formData.firstName}
                 onChange={handleInputChange}
@@ -73,6 +101,7 @@ export default function SignUpPage() {
               {/* שם משפחה */}
               <Input
                 id='lastName'
+                name='lastName'
                 label='שם משפחה'
                 value={formData.lastName}
                 onChange={handleInputChange}
@@ -83,6 +112,7 @@ export default function SignUpPage() {
             {/* מייל */}
             <Input
               id='email'
+              name='email'
               type='email'
               label='כתובת מייל'
               value={formData.email}
@@ -124,6 +154,7 @@ export default function SignUpPage() {
             {/* סיסמא */}
             <Input
               id='password'
+              name='password'
               type='password'
               label='סיסמא'
               value={formData.password}
@@ -134,6 +165,7 @@ export default function SignUpPage() {
             {/* אימות סיסמא */}
             <Input
               id='confirmPassword'
+              name='confirmPassword'
               type='password'
               label='אימות סיסמא'
               value={formData.confirmPassword}

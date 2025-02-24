@@ -32,7 +32,11 @@ export default function LoginPage() {
       window.location.href = '/pricing';
     } catch (error) {
       console.error('Login error:', error);
-      setError(error instanceof Error ? error.message : 'An error occurred during login');
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred during login'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -66,10 +70,11 @@ export default function LoginPage() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder='הכנס את האימייל שלך'
-              required
+              name='email'
             />
             <Input
               id='password'
+              name='password'
               label='סיסמה'
               type='password'
               value={password}
