@@ -46,7 +46,7 @@ class AuthService {
       });
 
       console.log("crash here 1");
-      console.log(response);
+      
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || 'Registration failed');

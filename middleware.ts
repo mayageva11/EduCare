@@ -8,6 +8,7 @@ const publicPaths = [
   '/',
   '/login',
   '/signUp',
+  '/api/auth/register',
   // Add other public paths as needed
 ];
 
