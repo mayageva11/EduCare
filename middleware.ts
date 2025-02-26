@@ -9,7 +9,7 @@ const publicPaths = [
   '/login',
   '/signUp',
   '/api/auth/register',
-  // Add other public paths as needed
+  '/api/auth/login',
 ];
 
 export function middleware(request: NextRequest) {
@@ -64,8 +64,7 @@ export function middleware(request: NextRequest) {
 // Configure which paths the middleware runs on
 export const config = {
   matcher: [
-    // Protected routes
-    '/aboutUs',
+    // Protected routes,
     '/api/:path*',
   ],
 };
