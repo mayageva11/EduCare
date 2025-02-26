@@ -68,7 +68,7 @@ export default function SignUpPage() {
       alert(result.message || 'נרשמת בהצלחה! החשבון שלך יאושר בקרוב');
 
       // Redirect to login page
-      window.location.href = '/';
+      window.location.href = '/home';
     } catch (error: any) {
       console.error('Signup error:', error);
       alert(error.message || 'אירעה שגיאה בתהליך ההרשמה');
