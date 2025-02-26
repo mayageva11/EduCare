@@ -61,6 +61,7 @@ export default function SignUpPage() {
       }
 
       // Use auth service to register
+      
       const result = await authService.register(formData);
 
       // Handle successful response

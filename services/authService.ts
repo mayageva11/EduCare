@@ -23,6 +23,7 @@ class AuthService {
   }
   async register(userData: User) {
     try {
+
       // Create FormData for file upload
       const formData = new FormData();
 
@@ -44,12 +45,19 @@ class AuthService {
         body: formData
       });
 
+      console.log("crash here 1");
+      console.log(response);
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error(data.error || 'Registration failed');
       }
 
+      // Store token in localStorage if immediate login is desired
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+      
       return data;
     } catch (error) {
       throw error;

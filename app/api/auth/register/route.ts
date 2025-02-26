@@ -4,12 +4,14 @@ import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 import { writeFile } from 'fs/promises';
 import path from 'path';
+import { generateToken } from '@/lib/jwt';
+import { cookies } from 'next/headers';
 
 export async function POST(request: NextRequest) {
   try {
     // Connect to database
     await connectDB();
-
+    
     // Get form data
     const formData = await request.formData();
 
@@ -61,7 +63,6 @@ export async function POST(request: NextRequest) {
       // Convert file to buffer
       const bytes = await certificateFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
-
       // Create upload directory if it doesn't exist
       const uploadDir = path.join(process.cwd(), 'public/uploads');
       try {
@@ -102,12 +103,36 @@ export async function POST(request: NextRequest) {
 
     // Save user to database
     await newUser.save();
+  
+    // Create token payload
+    const tokenPayload = {
+      userId: newUser._id.toString(),
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role || 'user'
+    };
+    
+    // Generate JWT token
+    const token = generateToken(tokenPayload);
+    // Set HTTP-only cookie with token
 
+    const cookieStore = await cookies();
+    cookieStore.set({
+      name: 'auth_token',
+      value: token,
+      httpOnly: true,
+      path: '/',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
+      sameSite: 'strict',
+    });
+    
     // Return success response
     return NextResponse.json(
       {
         success: true,
-        message: 'ההרשמה בוצעה בהצלחה! החשבון שלך יאושר לאחר בדיקת המסמכים'
+        message: 'ההרשמה בוצעה בהצלחה! החשבון שלך יאושר לאחר בדיקת המסמכים',
+        token,
       },
       { status: 201 }
     );
