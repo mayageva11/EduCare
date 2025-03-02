@@ -1,3 +1,4 @@
+import { StudentFormData, Student } from '@/types/students';
 import { StudentTag } from '../models/Students';
 
 export interface StudentStats {
@@ -7,12 +8,6 @@ export interface StudentStats {
   red: number; // קשיים לימודיים, התנהגותיים, חברתיים ומשפחתיים
   blue: number; // מדווח קב"ס
   purple: number; // מדווח רווחה
-}
-
-export interface Student {
-  id: string;
-  name: string;
-  tags: StudentTag[];
 }
 
 class StudentService {
@@ -45,38 +40,30 @@ class StudentService {
     }
   }
 
+  // קבלת כל הסטודנטים
   async getStudents(): Promise<Student[]> {
     try {
-      const response = await fetch('/api/students', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
+      const response = await fetch('/api/students/getAllStudents');
       if (!response.ok) {
         throw new Error('Failed to fetch students');
       }
-
       const data = await response.json();
-      return data.students;
+      return data;
     } catch (error) {
       console.error('Error fetching students:', error);
       return [];
     }
   }
 
-  async createStudent(studentData: {
-    name: string;
-    tags: StudentTag[];
-  }): Promise<Student | null> {
+  // יצירת סטודנט חדש
+  async createStudent(formData: StudentFormData): Promise<Student | null> {
     try {
-      const response = await fetch('/api/students', {
+      const response = await fetch('/api/students/addStudent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(studentData)
+        body: JSON.stringify(formData)
       });
 
       if (!response.ok) {
@@ -84,7 +71,7 @@ class StudentService {
       }
 
       const data = await response.json();
-      return data.student;
+      return data.student || data;
     } catch (error) {
       console.error('Error creating student:', error);
       return null;
