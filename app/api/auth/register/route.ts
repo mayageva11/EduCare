@@ -17,11 +17,9 @@ export async function POST(request: NextRequest) {
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;
     const email = formData.get('email') as string;
+    const school = formData.get('school') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
-
-    // Extract certificate file
-    const certificateFile = formData.get('certificate') as File | null;
 
     // Validate required fields
     if (
@@ -30,7 +28,7 @@ export async function POST(request: NextRequest) {
       !email ||
       !password ||
       !confirmPassword ||
-      !certificateFile
+      !school
     ) {
       return NextResponse.json(
         { error: 'כל השדות הינם חובה' },
@@ -55,37 +53,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Handle certificate file
-    let certificateUrl = '';
-    if (certificateFile) {
-      // Convert file to buffer
-      const bytes = await certificateFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      // Create upload directory if it doesn't exist
-      const uploadDir = path.join(process.cwd(), 'public/uploads');
-      try {
-        await writeFile(path.join(uploadDir, 'test.txt'), 'test');
-      } catch (error) {
-        // Directory doesn't exist, create it
-        const fs = require('fs');
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
-        }
-      }
-
-      // Generate unique filename
-      const uniqueFilename = `${Date.now()}-${certificateFile.name.replace(
-        /\s+/g,
-        '-'
-      )}`;
-      const filePath = path.join(uploadDir, uniqueFilename);
-
-      // Save file
-      await writeFile(filePath, buffer);
-      certificateUrl = `/uploads/${uniqueFilename}`;
-    }
-
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -96,7 +63,7 @@ export async function POST(request: NextRequest) {
       lastName,
       email,
       password: hashedPassword,
-      certificateUrl,
+      school,
       isVerified: false // User needs to be verified by admin
     });
 
