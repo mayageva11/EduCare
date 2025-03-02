@@ -9,26 +9,63 @@ export enum StudentTag {
   PURPLE = 'purple' // מדווח רווחה
 }
 
-const studentSchema = new mongoose.Schema({
+const ParentSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'יש להזין שם תלמיד/ה']
+    required: [true, 'Parent name is required']
   },
-  tags: {
-    type: [String],
-    enum: Object.values(StudentTag),
-    required: [true, 'יש לבחור לפחות תגית אחת']
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'יש צורך במזהה משתמש']
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  phone: {
+    type: String,
+    required: [true, 'Parent phone is required']
   }
 });
+
+const studentSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: [true, 'יש להזין שם פרטי']
+    },
+    lastName: {
+      type: String,
+      required: [true, 'יש להזין שם משפחה']
+    },
+    grade: {
+      type: String,
+      required: [true, 'יש להזין כיתה']
+    },
+    tags: {
+      type: [String],
+      enum: Object.values(StudentTag),
+      required: [true, 'יש לבחור לפחות תגית אחת']
+    },
+    parents: {
+      type: [ParentSchema],
+      required: [true, 'Parens data is required']
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
+    }
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
+);
+
+// וירטואל לשם מלא
+studentSchema.virtual('name').get(function () {
+  return `${this.firstName} ${this.lastName}`;
+});
+
+// אינדקס משולב לחיפוש יעיל לפי שם
+studentSchema.index({ firstName: 'text', lastName: 'text' });
 
 export default mongoose.models.Student ||
   mongoose.model('Student', studentSchema);
