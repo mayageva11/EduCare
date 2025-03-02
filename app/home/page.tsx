@@ -3,8 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/NavBar';
 import Button from '@/components/Button';
+import PieChart from '@/components/PieChart';
+import ExternalLinks from '@/components/ExternalLinks';
 import { reminderService, Reminder } from '@/services/reminderService';
 import { studentService, StudentStats } from '@/services/studentService';
+import { externalLinks } from '@/data/externalLinks';
+import { getTagColor, tagLabels } from '@/utils/colors';
 
 export default function HomePage() {
   // State for data
@@ -26,7 +30,7 @@ export default function HomePage() {
   const navLinks = [
     { href: '/tracking', label: 'מעקב' },
     {
-      href: '/activities', // Changed from '#' to '/activities'
+      href: '/activities',
       label: 'פעילויות',
       dropdown: [
         { href: '/activities/history', label: 'היסטוריית פעילויות' },
@@ -35,7 +39,7 @@ export default function HomePage() {
     },
     { href: '/calendar', label: 'יומן' },
     {
-      href: '/contacts', // Changed from '#' to '/contacts'
+      href: '/contacts',
       label: 'אנשי קשר',
       dropdown: [
         { href: '/contacts/forum', label: 'פורום' },
@@ -60,8 +64,8 @@ export default function HomePage() {
 
         // Fetch student statistics
         setIsLoading(prev => ({ ...prev, stats: true }));
-        // const statsData = await studentService.getStudentStats();
-        // setStatistics(statsData);
+        const statsData = await studentService.getStudentStats();
+        setStatistics(statsData);
         setIsLoading(prev => ({ ...prev, stats: false }));
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -72,22 +76,15 @@ export default function HomePage() {
     fetchData();
   }, []);
 
-  // Define tag labels
-  const tagLabels = {
-    green: 'לומד, מתפקד בבית ספר ואין בעיות',
-    yellow: 'קשב וריכוז לא מטופל וקשיים רגשיים',
-    orange: 'קשיים לימודיים, רגשיים, והתנהגותיים',
-    red: 'קשיים לימודיים, התנהגותיים, חברתיים ומשפחתיים',
-    blue: 'מדווח קב"ס',
-    purple: 'מדווח רווחה'
-  };
-
   return (
     <>
       <Navbar links={navLinks} />
 
       {/* Main Content */}
       <div className='max-w-7xl mx-auto px-6 py-8'>
+        {/* קישורים חיצוניים */}
+        <ExternalLinks links={externalLinks} />
+
         {/* Reminders Section */}
         <div className='bg-white rounded-2xl shadow-xl p-8 mb-10'>
           <h2 className='text-3xl font-bold text-[#2c5282] mb-6'>
@@ -150,7 +147,7 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Statistics Section */}
+        {/* Statistics Section - עם דיאגרמת העוגה */}
         <div className='bg-white rounded-2xl shadow-xl p-8'>
           <h2 className='text-3xl font-bold text-[#2c5282] mb-6'>
             סטטיסטיקות תלמידים
@@ -162,150 +159,15 @@ export default function HomePage() {
             </div>
           ) : totalStudents > 0 ? (
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-10'>
-              {/* Pie Chart */}
+              {/* דיאגרמת עוגה */}
               <div className='flex items-center justify-center'>
-                <div className='relative w-72 h-72'>
-                  {/* Simplified pie chart visual */}
-                  <svg viewBox='0 0 100 100'>
-                    {/* Green segment */}
-                    <circle
-                      cx='50'
-                      cy='50'
-                      r='40'
-                      fill='transparent'
-                      stroke='#4ade80'
-                      strokeWidth='20'
-                      strokeDasharray={`${
-                        (statistics.green / totalStudents) * 251.2
-                      } 251.2`}
-                      transform='rotate(-90 50 50)'
-                    />
-
-                    {/* Yellow segment */}
-                    <circle
-                      cx='50'
-                      cy='50'
-                      r='40'
-                      fill='transparent'
-                      stroke='#facc15'
-                      strokeWidth='20'
-                      strokeDasharray={`${
-                        (statistics.yellow / totalStudents) * 251.2
-                      } 251.2`}
-                      strokeDashoffset={`${
-                        -(statistics.green / totalStudents) * 251.2
-                      }`}
-                      transform='rotate(-90 50 50)'
-                    />
-
-                    {/* Orange segment */}
-                    <circle
-                      cx='50'
-                      cy='50'
-                      r='40'
-                      fill='transparent'
-                      stroke='#fb923c'
-                      strokeWidth='20'
-                      strokeDasharray={`${
-                        (statistics.orange / totalStudents) * 251.2
-                      } 251.2`}
-                      strokeDashoffset={`${
-                        -(
-                          (statistics.green + statistics.yellow) /
-                          totalStudents
-                        ) * 251.2
-                      }`}
-                      transform='rotate(-90 50 50)'
-                    />
-
-                    {/* Red segment */}
-                    <circle
-                      cx='50'
-                      cy='50'
-                      r='40'
-                      fill='transparent'
-                      stroke='#f87171'
-                      strokeWidth='20'
-                      strokeDasharray={`${
-                        (statistics.red / totalStudents) * 251.2
-                      } 251.2`}
-                      strokeDashoffset={`${
-                        -(
-                          (statistics.green +
-                            statistics.yellow +
-                            statistics.orange) /
-                          totalStudents
-                        ) * 251.2
-                      }`}
-                      transform='rotate(-90 50 50)'
-                    />
-
-                    {/* Blue segment */}
-                    <circle
-                      cx='50'
-                      cy='50'
-                      r='40'
-                      fill='transparent'
-                      stroke='#60a5fa'
-                      strokeWidth='20'
-                      strokeDasharray={`${
-                        (statistics.blue / totalStudents) * 251.2
-                      } 251.2`}
-                      strokeDashoffset={`${
-                        -(
-                          (statistics.green +
-                            statistics.yellow +
-                            statistics.orange +
-                            statistics.red) /
-                          totalStudents
-                        ) * 251.2
-                      }`}
-                      transform='rotate(-90 50 50)'
-                    />
-
-                    {/* Purple segment */}
-                    <circle
-                      cx='50'
-                      cy='50'
-                      r='40'
-                      fill='transparent'
-                      stroke='#c084fc'
-                      strokeWidth='20'
-                      strokeDasharray={`${
-                        (statistics.purple / totalStudents) * 251.2
-                      } 251.2`}
-                      strokeDashoffset={`${
-                        -(
-                          (statistics.green +
-                            statistics.yellow +
-                            statistics.orange +
-                            statistics.red +
-                            statistics.blue) /
-                          totalStudents
-                        ) * 251.2
-                      }`}
-                      transform='rotate(-90 50 50)'
-                    />
-
-                    {/* Centre circle */}
-                    <circle cx='50' cy='50' r='30' fill='white' />
-
-                    {/* Total count text */}
-                    <text
-                      x='50'
-                      y='50'
-                      textAnchor='middle'
-                      dominantBaseline='middle'
-                      fontSize='12'
-                      fontWeight='bold'
-                    >
-                      {totalStudents} תלמידים
-                    </text>
-                  </svg>
-                </div>
+                <PieChart
+                  statistics={statistics}
+                  totalStudents={totalStudents}
+                />
               </div>
 
-              {/* Legend */}
+              {/* מקרא */}
               <div className='flex flex-col justify-center'>
                 <div className='space-y-4'>
                   {Object.entries(statistics).map(
@@ -313,12 +175,13 @@ export default function HomePage() {
                       count > 0 && (
                         <div key={tag} className='flex items-center'>
                           <div
-                            className={`w-5 h-5 bg-${tag}-400 ml-3 rounded-sm`}
+                            className='w-5 h-5 rounded-sm ml-3'
+                            style={{ backgroundColor: getTagColor(tag) }}
                           ></div>
                           <span className='text-lg'>
                             {tagLabels[tag as keyof typeof tagLabels]}
                           </span>
-                          <span className='mr-2 text-lg font-bold'>
+                          <span className='mr-auto text-lg font-bold'>
                             {count} תלמידים (
                             {Math.round((count / totalStudents) * 100)}%)
                           </span>

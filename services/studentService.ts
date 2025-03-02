@@ -11,6 +11,7 @@ export interface StudentStats {
 }
 
 class StudentService {
+  // services/studentService.ts
   async getStudentStats(): Promise<StudentStats> {
     try {
       const response = await fetch('/api/students/stats', {
@@ -24,11 +25,10 @@ class StudentService {
         throw new Error('Failed to fetch student statistics');
       }
 
-      const data = await response.json();
-      return data.stats;
+      // הנתונים מוחזרים ישירות מה-API ללא מפתח 'stats'
+      return await response.json();
     } catch (error) {
       console.error('Error fetching student statistics:', error);
-      // Return zeroed stats as fallback
       return {
         green: 0,
         yellow: 0,

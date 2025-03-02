@@ -18,9 +18,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'סיסמה היא שדה חובה']
   },
-  certificateUrl: {
+  school: {
     type: String,
-    required: [true, 'תעודת יועץ היא שדה חובה']
+    required: [true, 'בית הספר הוא שדה חובה']
   },
   isVerified: {
     type: Boolean,
