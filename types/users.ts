@@ -8,9 +8,9 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  school: string;
   password: string;
   confirmPassword: string;
-  certificate: File | null;
 }
 
 // Interface for user data without sensitive information
@@ -19,4 +19,5 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   email: string;
+  school: string;
 }

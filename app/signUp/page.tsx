@@ -18,7 +18,7 @@ export default function SignUpPage() {
     email: '',
     password: '',
     confirmPassword: '',
-    certificate: null
+    school: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,15 +27,6 @@ export default function SignUpPage() {
       ...prev,
       [name]: value
     }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData(prev => ({
-        ...prev,
-        certificate: e.target.files?.[0] || null
-      }));
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,7 +39,7 @@ export default function SignUpPage() {
         !formData.email ||
         !formData.password ||
         !formData.confirmPassword ||
-        !formData.certificate
+        !formData.school
       ) {
         alert('כל השדות הינם חובה');
         return;
@@ -120,37 +111,16 @@ export default function SignUpPage() {
               onChange={handleInputChange}
               required
             />
-
-            {/* העלאת תעודה */}
-            <div>
-              <label className='block text-lg font-medium text-gray-700 mb-2'>
-                תעודת יועץ חינוכי 📄
-              </label>
-              <p className='text-gray-600 mb-3'>
-                נא להעלות את רישיון היעוץ ממשרד החינוך
-              </p>
-              <div className='flex items-center gap-4'>
-                <label
-                  className='px-6 py-3 rounded-lg bg-blue-100 text-blue-600 font-medium
-                              hover:bg-blue-200 transition-all duration-200 text-lg 
-                              flex items-center gap-2 cursor-pointer'
-                >
-                  <span>העלאת קובץ</span>
-                  <span className='text-2xl'>📎</span>
-                  <input
-                    type='file'
-                    onChange={handleFileChange}
-                    className='hidden'
-                    accept='.pdf,.doc,.docx,.jpg,.jpeg,.png'
-                  />
-                </label>
-                <span className='text-gray-500 text-sm'>
-                  {formData.certificate
-                    ? formData.certificate.name
-                    : 'טרם נבחר קובץ'}
-                </span>
-              </div>
-            </div>
+            {/* סיסמא */}
+            <Input
+              id='school'
+              name='school'
+              type='school'
+              label='שם בית ספר'
+              value={formData.school}
+              onChange={handleInputChange}
+              required
+            />
 
             {/* סיסמא */}
             <Input

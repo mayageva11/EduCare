@@ -38,13 +38,9 @@ class AuthService {
       formData.append('firstName', userData.firstName);
       formData.append('lastName', userData.lastName);
       formData.append('email', userData.email);
+      formData.append('school', userData.school);
       formData.append('password', userData.password);
       formData.append('confirmPassword', userData.confirmPassword);
-
-      // Add certificate file if it exists
-      if (userData.certificate) {
-        formData.append('certificate', userData.certificate);
-      }
 
       // Send request
       const response = await fetch('/api/auth/register', {

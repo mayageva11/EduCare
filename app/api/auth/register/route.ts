@@ -19,10 +19,9 @@ export async function POST(request: NextRequest) {
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;
     const email = formData.get('email') as string;
+    const school = formData.get('school') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
-
-    // Extract certificate file
     const certificateFile = formData.get('certificate') as File | null;
 
     // Validate required fields
@@ -32,7 +31,7 @@ export async function POST(request: NextRequest) {
       !email ||
       !password ||
       !confirmPassword ||
-      !certificateFile
+      !school
     ) {
       return NextResponse.json(
         { error: 'כל השדות הינם חובה' },
@@ -57,22 +56,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Handle certificate file
+    // Handle certificate file upload
     let certificateUrl = '';
     if (certificateFile) {
       // Convert file to buffer
       const bytes = await certificateFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      // Create upload directory if it doesn't exist
+
+      // Define upload directory
       const uploadDir = path.join(process.cwd(), 'public/uploads');
-      try {
-        await writeFile(path.join(uploadDir, 'test.txt'), 'test');
-      } catch (error) {
-        // Directory doesn't exist, create it
-        const fs = require('fs');
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
-        }
+
+      // Ensure directory exists
+      const fs = require('fs');
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
       }
 
       // Generate unique filename
@@ -97,7 +94,8 @@ export async function POST(request: NextRequest) {
       lastName,
       email,
       password: hashedPassword,
-      certificateUrl,
+      school,
+      certificateUrl, // Save the certificate URL in the database
       isVerified: false // User needs to be verified by admin
     });
 
@@ -107,15 +105,15 @@ export async function POST(request: NextRequest) {
     // Create token payload
     const tokenPayload = {
       userId: newUser._id.toString(),
-      name: newUser.name,
+      name: newUser.firstName, // Fixed incorrect field reference
       email: newUser.email,
       role: newUser.role || 'user'
     };
     
     // Generate JWT token
     const token = generateToken(tokenPayload);
-    // Set HTTP-only cookie with token
 
+    // Set HTTP-only cookie with token
     const cookieStore = await cookies();
     cookieStore.set({
       name: 'auth_token',
@@ -128,6 +126,7 @@ export async function POST(request: NextRequest) {
     });
     
     const userID = newUser._id;
+
     // Return success response
     return NextResponse.json(
       {
