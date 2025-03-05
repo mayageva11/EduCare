@@ -127,12 +127,14 @@ export async function POST(request: NextRequest) {
       sameSite: 'strict',
     });
     
+    const userID = newUser._id;
     // Return success response
     return NextResponse.json(
       {
         success: true,
         message: 'ההרשמה בוצעה בהצלחה! החשבון שלך יאושר לאחר בדיקת המסמכים',
         token,
+        userID,
       },
       { status: 201 }
     );

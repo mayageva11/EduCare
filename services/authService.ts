@@ -16,11 +16,18 @@ class AuthService {
         throw new Error(data.error || 'Login failed');
       }
 
+      // Store token in localStorage if immediate login is desired
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userID', JSON.stringify(data.userID));
+      }
+
       return data;
     } catch (error) {
       throw error;
     }
   }
+
   async register(userData: User) {
     try {
 
@@ -45,8 +52,6 @@ class AuthService {
         body: formData
       });
 
-      console.log("crash here 1");
-      
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || 'Registration failed');
@@ -54,11 +59,26 @@ class AuthService {
 
       // Store token in localStorage if immediate login is desired
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('token', data.token);    
+        localStorage.setItem('userID', JSON.stringify(data.userID));
       }
       
       return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProfile() {
+    try {
+      const response = await fetch('/api/auth/getUser');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch user');
+      }
+
+      return data.user;
     } catch (error) {
       throw error;
     }

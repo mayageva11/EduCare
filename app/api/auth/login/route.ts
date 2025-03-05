@@ -28,10 +28,12 @@ export async function POST(request: Request) {
       );
     }
 
+    const userID = user._id;
+
     // Return success response
     return NextResponse.json(
-      { message: 'Login successful', user: { email: user.email } },
-      { status: 200 }
+      { message: 'Login successful', user: { email: user.email }, userID },
+      { status: 200 },
     );
 
   } catch (error) {
