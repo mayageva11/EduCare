@@ -11,6 +11,9 @@ export interface Student {
   grade: string;
   tags: string[];
   parents: Parent[];
+  counselorNotes?: string;
+  isOnMedication?: boolean;
+  medicationDetails?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

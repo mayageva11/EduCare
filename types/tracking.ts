@@ -20,6 +20,11 @@ export interface Task {
   startDate: string;
   status: string;
   priority?: string;
+  studentId?: string;
+  studentName?: string;
+  studentGrade?: string;
+  dueDate?: string;
+  description?: string;
   notes: string;
 }
 

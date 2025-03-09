@@ -11,8 +11,11 @@ import AddTaskModal from '@/components/AddTaskModal';
 import EditTaskModal from '@/components/EditTaskModal';
 import AddFormModal from '@/components/AddFormModal';
 import EditTagsModal from '@/components/EditTagsModal';
+import CounselorNotesSection from '@/components/CounselorNotesSection';
+import MedicationSection from '@/components/MedicationSection';
 import { Student, Task, Form, TagOption } from '@/types/tracking';
 import { studentService } from '@/services/studentService';
+import EditStudentModal from '@/components/EditStudentModal';
 
 // Available tag options
 const tagOptions: TagOption[] = [
@@ -55,6 +58,7 @@ export default function StudentPage() {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isTagEditModalOpen, setIsTagEditModalOpen] = useState(false);
+  const [isEditStudentModalOpen, setIsEditStudentModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,6 +143,30 @@ export default function StudentPage() {
     } catch (error) {
       console.error('Error updating task:', error);
       alert('שגיאה בעדכון משימה');
+    }
+  };
+  const handleUpdateStudentInfo = async (
+    studentId: string,
+    studentData: {
+      firstName: string;
+      lastName: string;
+      grade: string;
+      parents: { name: string; phone: string }[];
+    }
+  ) => {
+    try {
+      const updatedStudent = await studentService.updateStudentInfo(
+        studentId,
+        studentData
+      );
+
+      if (updatedStudent) {
+        setStudent(updatedStudent as Student);
+        setIsEditStudentModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error updating student info:', error);
+      alert('שגיאה בעדכון פרטי התלמיד');
     }
   };
 
@@ -266,8 +294,21 @@ export default function StudentPage() {
         student={student}
         tagOptions={tagOptions}
         onEditTags={() => setIsTagEditModalOpen(true)}
+        onEditStudentInfo={() => setIsEditStudentModalOpen(true)}
       />
+      {isEditStudentModalOpen && student && (
+        <EditStudentModal
+          student={student}
+          onClose={() => setIsEditStudentModalOpen(false)}
+          onUpdateStudent={handleUpdateStudentInfo}
+        />
+      )}
 
+      {/* Insert these new components here */}
+      <CounselorNotesSection studentId={studentId} />
+      <MedicationSection studentId={studentId} />
+
+      {/* The TasksSection component should follow next */}
       <TasksSection
         tasks={tasks}
         onAddTask={() => setIsTaskModalOpen(true)}
