@@ -43,6 +43,18 @@ const studentSchema = new mongoose.Schema(
       type: [ParentSchema],
       required: [true, 'Parens data is required']
     },
+    counselorNotes: {
+      type: String,
+      default: ''
+    },
+    isOnMedication: {
+      type: Boolean,
+      default: false
+    },
+    medicationDetails: {
+      type: String,
+      default: ''
+    },
     createdAt: {
       type: Date,
       default: Date.now

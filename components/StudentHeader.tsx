@@ -4,21 +4,41 @@ interface StudentHeaderProps {
   student: Student;
   tagOptions: TagOption[];
   onEditTags: () => void;
+  onEditStudentInfo: () => void;
 }
 
 const StudentHeader = ({
   student,
   tagOptions,
-  onEditTags
+  onEditTags,
+  onEditStudentInfo
 }: StudentHeaderProps) => {
   return (
     <div className='bg-white rounded-2xl shadow-xl p-6 mb-8'>
       <div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-4'>
-        <div>
-          <h1 className='text-3xl font-bold text-[#2c5282]'>
-            {student.firstName} {student.lastName}
-          </h1>
-          <p className='text-gray-600 mt-2'>כיתה: {student.grade}</p>
+        <div className='flex flex-col md:flex-row items-start md:items-center'>
+          <div>
+            <h1 className='text-3xl font-bold text-[#2c5282]'>
+              {student.firstName} {student.lastName}
+            </h1>
+          </div>
+
+          {/* Prominent Edit Button - Added with margin */}
+          <button
+            onClick={onEditStudentInfo}
+            className='mt-3 md:mt-0 md:mr-4 px-3 py-1.5 flex items-center bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md transition-colors'
+            aria-label='Edit student info'
+          >
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='h-5 w-5 ml-1.5'
+              viewBox='0 0 20 20'
+              fill='currentColor'
+            >
+              <path d='M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z' />
+            </svg>
+            ערוך פרטי תלמיד
+          </button>
         </div>
 
         {/* Tags with Edit Button */}
@@ -60,9 +80,6 @@ const StudentHeader = ({
       <div className='border-t border-gray-200 pt-4 mt-2'>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div>
-            <h3 className='text-lg font-medium text-gray-700 mb-2'>
-              פרטי תלמיד
-            </h3>
             <p className='text-gray-600'>
               <span className='font-semibold'>כיתה:</span> {student.grade}
             </p>
@@ -74,7 +91,7 @@ const StudentHeader = ({
 
           <div>
             <h3 className='text-lg font-medium text-gray-700 mb-2'>
-              פרטי הורים
+              פרטי הורים / אפוטרופוס:
             </h3>
             <div className='space-y-2'>
               {student.parents.map((parent, index) => (

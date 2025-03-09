@@ -10,6 +10,9 @@ import { studentService, StudentStats } from '@/services/studentService';
 import { externalLinks } from '@/data/externalLinks';
 import { getTagColor, tagLabels } from '@/utils/colors';
 import TableHeaderCell from '@/components/TableHeaderCell';
+import AllTasksSection from '@/components/AllTasksSection';
+import { Task } from '@/types/tracking';
+import { taskService } from '@/services/taskService';
 
 export default function HomePage() {
   // State for data
@@ -22,9 +25,11 @@ export default function HomePage() {
     blue: 0,
     purple: 0
   });
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState({
     reminders: true,
-    stats: true
+    stats: true,
+    tasks: true
   });
 
   // Navigation links with dropdowns
@@ -68,9 +73,14 @@ export default function HomePage() {
         const statsData = await studentService.getStudentStats();
         setStatistics(statsData);
         setIsLoading(prev => ({ ...prev, stats: false }));
+        // Fetch all tasks
+        setIsLoading(prev => ({ ...prev, tasks: true }));
+        const tasksData = await taskService.getAllTasks();
+        setAllTasks(tasksData);
+        setIsLoading(prev => ({ ...prev, tasks: false }));
       } catch (error) {
         console.error('Error fetching data:', error);
-        setIsLoading({ reminders: false, stats: false });
+        setIsLoading({ reminders: false, stats: false, tasks: false });
       }
     };
 
@@ -146,6 +156,9 @@ export default function HomePage() {
               </Button>
             </div>
           )}
+        </div>
+        <div className='mb-10'>
+          <AllTasksSection tasks={allTasks} isLoading={isLoading.tasks} />
         </div>
 
         {/* Statistics Section - עם דיאגרמת העוגה */}
