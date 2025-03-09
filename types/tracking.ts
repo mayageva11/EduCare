@@ -33,6 +33,11 @@ export interface Form {
   name: string;
   createdAt: string;
   editable: boolean;
+  fileUrl?: string;
+  fileName?: string;
+  fileType?: string;
+  status?: string;
+  studentId?: string;
 }
 
 export interface TagOption {

@@ -1,23 +1,50 @@
 import { Form } from '@/types/tracking';
+import { useState } from 'react';
 
 interface FormsSectionProps {
   forms: Form[];
   onAddForm: () => void;
   onDeleteForm: (formId: string) => void;
+  onAddStandardForm: (formType: string) => void;
 }
 
 const FormsSection = ({
   forms,
   onAddForm,
-  onDeleteForm
+  onDeleteForm,
+  onAddStandardForm
 }: FormsSectionProps) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleDownload = (fileUrl: string, fileName: string) => {
+    // Create an anchor element and trigger download
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.download = fileName || 'download';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Handle standard form creation
+  const handleStandardFormClick = (formType: string) => {
+    onAddStandardForm(formType);
+    setShowDropdown(false);
+  };
+
+  // Handle file upload form
+  const handleFileUploadClick = () => {
+    onAddForm();
+    setShowDropdown(false);
+  };
+
   return (
     <div className='mb-8'>
       <div className='flex items-center justify-between mb-4'>
         <div className='flex items-center'>
           <div className='relative'>
             <button
-              onClick={onAddForm}
+              onClick={() => setShowDropdown(!showDropdown)}
               className='px-6 py-2 rounded-xl bg-blue-400 text-black font-semibold 
                     hover:bg-blue-500 transition-all duration-200 shadow-md flex items-center ml-4'
             >
@@ -35,6 +62,51 @@ const FormsSection = ({
               </svg>
               הוספת טופס
             </button>
+
+            {showDropdown && (
+              <div className='absolute left-0 mt-2 w-56 rounded-xl bg-white shadow-lg py-1 z-10'>
+                <button
+                  onClick={handleFileUploadClick}
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-right'
+                >
+                  העלאת קובץ
+                </button>
+                <button
+                  onClick={() => handleStandardFormClick('functional_report')}
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-right'
+                >
+                  דו״ח תפקוד
+                </button>
+                <button
+                  onClick={() => handleStandardFormClick('meeting_summary')}
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-right'
+                >
+                  סיכום פגישה
+                </button>
+                <button
+                  onClick={() =>
+                    handleStandardFormClick('confidentiality_waiver')
+                  }
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-right'
+                >
+                  ויתור סודיות
+                </button>
+                <button
+                  onClick={() => handleStandardFormClick('parent_consent')}
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-right'
+                >
+                  טופס הסכמת הורים להיבחנות מותאמת
+                </button>
+                <button
+                  onClick={() =>
+                    handleStandardFormClick('teacher_questionnaire')
+                  }
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-right'
+                >
+                  שאלון מחנכת
+                </button>
+              </div>
+            )}
           </div>
           <h2 className='text-2xl font-bold text-[#2c5282]'>טפסים</h2>
         </div>
@@ -74,43 +146,93 @@ const FormsSection = ({
                     <td className='px-6 py-4 whitespace-nowrap'>
                       <div className='flex gap-4'>
                         {/* Preview Button */}
-                        <button
-                          className='text-blue-500 hover:text-blue-700'
-                          title='לחץ לצפייה'
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5'
-                            viewBox='0 0 20 20'
-                            fill='currentColor'
+                        {form.fileUrl ? (
+                          <a
+                            href={form.fileUrl}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='text-blue-500 hover:text-blue-700'
+                            title='לחץ לצפייה'
                           >
-                            <path d='M10 12a2 2 0 100-4 2 2 0 000 4z' />
-                            <path
-                              fillRule='evenodd'
-                              d='M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z'
-                              clipRule='evenodd'
-                            />
-                          </svg>
-                        </button>
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              className='h-5 w-5'
+                              viewBox='0 0 20 20'
+                              fill='currentColor'
+                            >
+                              <path d='M10 12a2 2 0 100-4 2 2 0 000 4z' />
+                              <path
+                                fillRule='evenodd'
+                                d='M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z'
+                                clipRule='evenodd'
+                              />
+                            </svg>
+                          </a>
+                        ) : (
+                          <button
+                            className='text-blue-500 hover:text-blue-700'
+                            title='לחץ לצפייה'
+                          >
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              className='h-5 w-5'
+                              viewBox='0 0 20 20'
+                              fill='currentColor'
+                            >
+                              <path d='M10 12a2 2 0 100-4 2 2 0 000 4z' />
+                              <path
+                                fillRule='evenodd'
+                                d='M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z'
+                                clipRule='evenodd'
+                              />
+                            </svg>
+                          </button>
+                        )}
 
                         {/* Download Button */}
-                        <button
-                          className='text-green-500 hover:text-green-700'
-                          title='הורד קובץ'
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            className='h-5 w-5'
-                            viewBox='0 0 20 20'
-                            fill='currentColor'
+                        {form.fileUrl ? (
+                          <button
+                            className='text-green-500 hover:text-green-700'
+                            title='הורד קובץ'
+                            onClick={() =>
+                              handleDownload(
+                                form.fileUrl || '',
+                                form.fileName || form.name
+                              )
+                            }
                           >
-                            <path
-                              fillRule='evenodd'
-                              d='M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z'
-                              clipRule='evenodd'
-                            />
-                          </svg>
-                        </button>
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              className='h-5 w-5'
+                              viewBox='0 0 20 20'
+                              fill='currentColor'
+                            >
+                              <path
+                                fillRule='evenodd'
+                                d='M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z'
+                                clipRule='evenodd'
+                              />
+                            </svg>
+                          </button>
+                        ) : (
+                          <button
+                            className='text-green-500 hover:text-green-700'
+                            title='הורד קובץ'
+                          >
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              className='h-5 w-5'
+                              viewBox='0 0 20 20'
+                              fill='currentColor'
+                            >
+                              <path
+                                fillRule='evenodd'
+                                d='M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z'
+                                clipRule='evenodd'
+                              />
+                            </svg>
+                          </button>
+                        )}
 
                         {/* Edit Button (conditional) */}
                         {form.editable ? (

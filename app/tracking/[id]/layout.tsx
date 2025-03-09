@@ -22,7 +22,6 @@ export default function TrackingLayout({
         { href: '/activities/new', label: 'הוספת פעילות חדשה' }
       ]
     },
-    { href: '/tracking', label: 'מעקב תלמידים' },
     { href: '/calendar', label: 'יומן' },
     {
       href: '/contacts',

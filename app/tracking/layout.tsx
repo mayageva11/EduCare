@@ -15,7 +15,6 @@ const navLinks = [
       { href: '/activities/new', label: 'הוספת פעילות חדשה' }
     ]
   },
-  { href: '/tracking', label: 'מעקב תלמידים' },
   { href: '/calendar', label: 'יומן' },
   {
     href: '/contacts',

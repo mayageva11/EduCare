@@ -1,87 +1,108 @@
-import { useState } from 'react';
-import Button from '@/components/Button';
+import React, { useState, useRef } from 'react';
 
 interface AddFormModalProps {
   onClose: () => void;
-  onAddForm: (formData: { formType: string }) => void;
+  onAddForm: (formData: any) => void;
 }
 
-const AddFormModal = ({ onClose, onAddForm }: AddFormModalProps) => {
-  const [formType, setFormType] = useState<string>('');
+const AddFormModal: React.FC<AddFormModalProps> = ({ onClose, onAddForm }) => {
+  const [formName, setFormName] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formType) {
-      onAddForm({ formType });
+
+    if (!selectedFile) {
+      alert('אנא בחר קובץ להעלאה');
+      return;
+    }
+
+    if (!formName) {
+      alert('אנא הזן שם לקובץ');
+      return;
+    }
+
+    try {
+      onAddForm({
+        formType: 'file_upload',
+        file: selectedFile,
+        name: formName
+      });
+    } catch (error) {
+      console.error('Error in form submission:', error);
+      alert('שגיאה בהעלאת הטופס');
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
-      <div className='bg-white rounded-2xl shadow-xl p-8 max-w-2xl w-full'>
-        <div className='flex justify-between items-center mb-6'>
-          <h2 className='text-2xl font-bold text-[#2c5282]'>הוספת טופס חדש</h2>
-          <button
-            onClick={onClose}
-            className='text-gray-400 hover:text-gray-600'
-            aria-label='Close modal'
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-6 w-6'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M6 18L18 6M6 6l12 12'
-              />
-            </svg>
-          </button>
-        </div>
+    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+      <div className='bg-white rounded-2xl p-8 max-w-lg w-full shadow-xl'>
+        <h2 className='text-2xl font-bold text-[#2c5282] mb-6 text-right'>
+          העלאת קובץ
+        </h2>
 
-        <form className='space-y-6' onSubmit={handleSubmit}>
-          <div>
-            <label
-              htmlFor='formType'
-              className='block text-sm font-medium text-gray-700 mb-1'
-            >
-              סוג טופס
+        <form onSubmit={handleSubmit} className='space-y-6'>
+          <div className='mb-4'>
+            <label className='block text-gray-700 text-sm font-bold mb-2 text-right'>
+              שם הקובץ
             </label>
-            <select
-              id='formType'
-              name='formType'
-              value={formType}
-              onChange={e => setFormType(e.target.value)}
-              className='w-full px-4 py-2 rounded-lg border border-gray-300 
-                       focus:ring-2 focus:ring-blue-400 focus:border-blue-400'
-              required
-            >
-              <option value=''>בחר סוג טופס</option>
-              <option value='fileUpload'>העלאת קובץ</option>
-              <option value='meetingSummary'>סיכום פגישה</option>
-              <option value='teacherQuestionnaire'>שאלון מחנכת</option>
-              <option value='confidentialityWaiver'>ויתור סודיות</option>
-              <option value='parentConsent'>
-                טופס הסכמת הורים להיבחנות מותאמת
-              </option>
-            </select>
+            <input
+              type='text'
+              value={formName}
+              onChange={e => setFormName(e.target.value)}
+              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-right'
+              placeholder='הזן שם לקובץ'
+            />
           </div>
 
-          <div className='mt-8 flex justify-center'>
-            {formType ? (
-              <Button type='submit'>המשך</Button>
-            ) : (
+          <div className='mb-4'>
+            <input
+              type='file'
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              className='hidden'
+            />
+            <div className='flex items-center justify-between space-x-4'>
               <button
                 type='button'
-                className='px-6 py-2 bg-gray-300 text-gray-500 rounded-xl font-semibold cursor-not-allowed shadow-md'
+                onClick={triggerFileInput}
+                className='px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors duration-200 focus:outline-none'
               >
-                המשך
+                בחר קובץ
               </button>
-            )}
+              <span className='text-gray-600 text-right flex-grow'>
+                {selectedFile ? selectedFile.name : 'לא נבחר קובץ'}
+              </span>
+            </div>
+          </div>
+
+          <div className='flex justify-between mt-8'>
+            <button
+              type='button'
+              onClick={onClose}
+              className='px-6 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors duration-200 focus:outline-none'
+            >
+              ביטול
+            </button>
+            <button
+              type='submit'
+              className='px-6 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors duration-200 focus:outline-none'
+            >
+              שמור
+            </button>
           </div>
         </form>
       </div>

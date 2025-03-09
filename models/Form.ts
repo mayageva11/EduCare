@@ -12,6 +12,10 @@ const formSchema = new mongoose.Schema(
       type: String,
       required: [true, 'יש להזין סוג טופס']
     },
+    name: {
+      type: String,
+      required: [true, 'יש להזין שם לטופס']
+    },
     status: {
       type: String,
       enum: Object.values(FormStatus),
@@ -21,6 +25,22 @@ const formSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Student',
       required: [true, 'יש לשייך טופס לתלמיד']
+    },
+    fileUrl: {
+      type: String,
+      default: ''
+    },
+    fileName: {
+      type: String,
+      default: ''
+    },
+    fileType: {
+      type: String,
+      default: ''
+    },
+    editable: {
+      type: Boolean,
+      default: true
     },
     createdAt: {
       type: Date,
