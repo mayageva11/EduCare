@@ -9,6 +9,7 @@ import { reminderService, Reminder } from '@/services/reminderService';
 import { studentService, StudentStats } from '@/services/studentService';
 import { externalLinks } from '@/data/externalLinks';
 import { getTagColor, tagLabels } from '@/utils/colors';
+import TableHeaderCell from '@/components/TableHeaderCell';
 
 export default function HomePage() {
   // State for data
@@ -100,18 +101,18 @@ export default function HomePage() {
               <table className='min-w-full divide-y divide-gray-200'>
                 <thead>
                   <tr>
-                    <th className='px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider'>
+                    <TableHeaderCell className='text-sm font-medium text-gray-600'>
                       תאריך
-                    </th>
-                    <th className='px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider'>
+                    </TableHeaderCell>
+                    <TableHeaderCell className='text-sm font-medium text-gray-600'>
                       שעה
-                    </th>
-                    <th className='px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider'>
+                    </TableHeaderCell>
+                    <TableHeaderCell className='text-sm font-medium text-gray-600'>
                       נושא
-                    </th>
-                    <th className='px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider'>
+                    </TableHeaderCell>
+                    <TableHeaderCell className='text-sm font-medium text-gray-600'>
                       תלמיד/ה
-                    </th>
+                    </TableHeaderCell>
                   </tr>
                 </thead>
                 <tbody className='bg-white divide-y divide-gray-200'>
@@ -161,10 +162,7 @@ export default function HomePage() {
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-10'>
               {/* דיאגרמת עוגה */}
               <div className='flex items-center justify-center'>
-                <PieChart
-                  statistics={statistics}
-                  totalStudents={totalStudents}
-                />
+                <PieChart statistics={statistics} totalStudents={0} />
               </div>
 
               {/* מקרא */}
@@ -180,10 +178,6 @@ export default function HomePage() {
                           ></div>
                           <span className='text-lg'>
                             {tagLabels[tag as keyof typeof tagLabels]}
-                          </span>
-                          <span className='mr-auto text-lg font-bold'>
-                            {count} תלמידים (
-                            {Math.round((count / totalStudents) * 100)}%)
                           </span>
                         </div>
                       )
