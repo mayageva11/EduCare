@@ -155,25 +155,6 @@ class StudentService {
     }
   };
 
-  // Add student form
-  addStudentForm = async (
-    studentId: string,
-    formData: { formType: string }
-  ): Promise<Form | null> => {
-    try {
-      const response = await fetch(`/api/students/addStudentForm`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentId, ...formData })
-      });
-      if (!response.ok) throw new Error('Failed to add form');
-      return await response.json();
-    } catch (error) {
-      console.error('Error adding form:', error);
-      return null;
-    }
-  };
-
   // Update student tags
   updateStudentTags = async (
     studentId: string,
@@ -220,25 +201,6 @@ class StudentService {
       return true;
     } catch (error) {
       console.error('Error deleting task:', error);
-      return false;
-    }
-  };
-  // Delete student form
-  deleteStudentForm = async (
-    studentId: string,
-    formId: string
-  ): Promise<boolean> => {
-    try {
-      const response = await fetch(
-        `/api/students/deleteStudentForm?studentId=${studentId}&formId=${formId}`,
-        {
-          method: 'DELETE'
-        }
-      );
-      if (!response.ok) throw new Error('Failed to delete form');
-      return true;
-    } catch (error) {
-      console.error('Error deleting form:', error);
       return false;
     }
   };
@@ -290,7 +252,6 @@ class StudentService {
       return null;
     }
   };
-  // Add these functions to your StudentService class
 
   // For counselor notes
   getStudentCounselorNotes = async (studentId: string): Promise<string> => {
@@ -430,7 +391,6 @@ class StudentService {
       throw error;
     }
   };
-  // Add this function to your StudentService class
 
   // Update student information
   updateStudentInfo = async (
@@ -465,6 +425,102 @@ class StudentService {
     } catch (error) {
       console.error('Error updating student information:', error);
       throw error;
+    }
+  };
+
+  // Upload form with file
+  uploadStudentForm = async (
+    studentId: string,
+    formData: {
+      formType: string;
+      name: string;
+      file: File;
+    }
+  ): Promise<Form | null> => {
+    try {
+      const formDataObj = new FormData();
+      formDataObj.append('file', formData.file);
+      formDataObj.append('formName', formData.name);
+      formDataObj.append('formType', formData.formType);
+      formDataObj.append('studentId', studentId);
+
+      const response = await fetch('/api/students/uploadForm', {
+        method: 'POST',
+        body: formDataObj
+      });
+
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: 'Unknown error' }));
+        console.error('Server error:', errorData);
+        throw new Error(errorData.error || 'Failed to upload form');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error uploading form:', error);
+      return null;
+    }
+  };
+
+  // Add student form - handles both standard forms and file uploads
+  addStudentForm = async (
+    studentId: string,
+    formData: any
+  ): Promise<Form | null> => {
+    try {
+      // Check if this is a file upload
+      if (formData.formType === 'file_upload' && formData.file) {
+        return this.uploadStudentForm(studentId, formData);
+      }
+
+      // Otherwise, handle as regular form
+      const response = await fetch('/api/students/addStudentForm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentId,
+          formType: formData.formType
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: 'Unknown error' }));
+        console.error('Server error:', errorData);
+        throw new Error(errorData.error || 'Failed to add form');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error adding form:', error);
+      return null;
+    }
+  };
+
+  // Delete student form
+  deleteStudentForm = async (
+    studentId: string,
+    formId: string
+  ): Promise<boolean> => {
+    try {
+      const response = await fetch(
+        `/api/students/deleteStudentForm?studentId=${studentId}&formId=${formId}`,
+        {
+          method: 'DELETE'
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete form');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting form:', error);
+      return false;
     }
   };
 }

@@ -170,22 +170,6 @@ export default function StudentPage() {
     }
   };
 
-  // Handle adding a new form
-  const handleAddForm = async (formData: { formType: string }) => {
-    try {
-      if (!studentId) return;
-
-      const newForm = await studentService.addStudentForm(studentId, formData);
-      if (newForm) {
-        setForms(prev => [...prev, newForm]);
-        setIsFormModalOpen(false);
-      }
-    } catch (error) {
-      console.error('Error adding form:', error);
-      alert('שגיאה בהוספת טופס');
-    }
-  };
-
   // Handle updating student tags
   const handleUpdateTags = async (tags: string[]) => {
     try {
@@ -225,6 +209,45 @@ export default function StudentPage() {
       alert('שגיאה במחיקת משימה');
     }
   };
+  // In your StudentPage component, add/update these handlers:
+
+  // Handle adding a new standard form
+  const handleAddStandardForm = async (formType: string) => {
+    try {
+      if (!studentId) return;
+
+      const formData = { formType };
+      const newForm = await studentService.addStudentForm(studentId, formData);
+
+      if (newForm) {
+        setForms(prev => [...prev, newForm]);
+      }
+    } catch (error) {
+      console.error('Error adding form:', error);
+      alert('שגיאה בהוספת טופס');
+    }
+  };
+
+  // Handle adding a new form with file upload
+  const handleAddForm = async (formData: {
+    formType: string;
+    name: string;
+    file: File;
+  }) => {
+    try {
+      if (!studentId) return;
+
+      const newForm = await studentService.addStudentForm(studentId, formData);
+
+      if (newForm) {
+        setForms(prev => [...prev, newForm]);
+        setIsFormModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error adding form:', error);
+      alert('שגיאה בהוספת טופס');
+    }
+  };
 
   // Handle delete form
   const handleDeleteForm = async (formId: string) => {
@@ -232,6 +255,7 @@ export default function StudentPage() {
       if (!studentId) return;
 
       const success = await studentService.deleteStudentForm(studentId, formId);
+
       if (success) {
         setForms(prev => prev.filter(form => form._id !== formId));
       }
@@ -289,7 +313,6 @@ export default function StudentPage() {
           חזרה לרשימת התלמידים
         </button>
       </div>
-
       <StudentHeader
         student={student}
         tagOptions={tagOptions}
@@ -303,11 +326,9 @@ export default function StudentPage() {
           onUpdateStudent={handleUpdateStudentInfo}
         />
       )}
-
       {/* Insert these new components here */}
       <CounselorNotesSection studentId={studentId} />
       <MedicationSection studentId={studentId} />
-
       {/* The TasksSection component should follow next */}
       <TasksSection
         tasks={tasks}
@@ -315,20 +336,27 @@ export default function StudentPage() {
         onDeleteTask={handleDeleteTask}
         onEditTask={handleEditTask}
       />
+      <>
+        <FormsSection
+          forms={forms}
+          onAddForm={() => setIsFormModalOpen(true)}
+          onDeleteForm={handleDeleteForm}
+          onAddStandardForm={handleAddStandardForm}
+        />
 
-      <FormsSection
-        forms={forms}
-        onAddForm={() => setIsFormModalOpen(true)}
-        onDeleteForm={handleDeleteForm}
-      />
-
+        {isFormModalOpen && (
+          <AddFormModal
+            onClose={() => setIsFormModalOpen(false)}
+            onAddForm={handleAddForm}
+          />
+        )}
+      </>
       {isTaskModalOpen && (
         <AddTaskModal
           onClose={() => setIsTaskModalOpen(false)}
           onAddTask={handleAddTask}
         />
       )}
-
       {isEditTaskModalOpen && taskToEdit && (
         <EditTaskModal
           task={taskToEdit}
@@ -339,14 +367,12 @@ export default function StudentPage() {
           onUpdateTask={handleUpdateTask}
         />
       )}
-
       {isFormModalOpen && (
         <AddFormModal
           onClose={() => setIsFormModalOpen(false)}
           onAddForm={handleAddForm}
         />
       )}
-
       {isTagEditModalOpen && (
         <EditTagsModal
           onClose={() => setIsTagEditModalOpen(false)}
