@@ -9,6 +9,14 @@ export enum StudentTag {
   PURPLE = 'purple' // מדווח רווחה
 }
 
+export enum StudentGroup {
+  NONE = 'none', // ללא
+  SPECIAL = 'special', // חיוך מיוחד
+  DIFFERENTIAL = 'differential', // דפרנציאלים
+  INTEGRATION = 'integration', // שילוב
+  GIFTED = 'gifted' // מחוננים
+}
+
 const ParentSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -42,6 +50,11 @@ const studentSchema = new mongoose.Schema(
     parents: {
       type: [ParentSchema],
       required: [true, 'Parens data is required']
+    },
+    group: {
+      type: String,
+      enum: Object.values(StudentGroup),
+      default: StudentGroup.NONE
     },
     counselorNotes: {
       type: String,

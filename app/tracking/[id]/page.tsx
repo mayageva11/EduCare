@@ -16,6 +16,7 @@ import MedicationSection from '@/components/MedicationSection';
 import { Student, Task, Form, TagOption } from '@/types/tracking';
 import { studentService } from '@/services/studentService';
 import EditStudentModal from '@/components/EditStudentModal';
+import GroupSection from '@/components/GroupSection';
 
 // Available tag options
 const tagOptions: TagOption[] = [
@@ -329,6 +330,10 @@ export default function StudentPage() {
       {/* Insert these new components here */}
       <CounselorNotesSection studentId={studentId} />
       <MedicationSection studentId={studentId} />
+      <GroupSection
+        studentId={studentId}
+        initialGroup={student.group || 'none'}
+      />
       {/* The TasksSection component should follow next */}
       <TasksSection
         tasks={tasks}

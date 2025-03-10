@@ -6,6 +6,7 @@ export interface Student {
   tags: string[];
   parents: Parent[];
   createdAt: Date | string;
+  group?: string;
 }
 
 export interface Parent {
@@ -38,6 +39,7 @@ export interface Form {
   fileType?: string;
   status?: string;
   studentId?: string;
+  group?: string;
 }
 
 export interface TagOption {
@@ -45,3 +47,18 @@ export interface TagOption {
   label: string;
   color: string;
 }
+export enum StudentGroup {
+  NONE = 'none', // ללא
+  SPECIAL = 'special', // חיוך מיוחד
+  DIFFERENTIAL = 'differential', // דפרנציאלים
+  INTEGRATION = 'integration', // שילוב
+  GIFTED = 'gifted' // מחוננים
+}
+
+export const GROUP_OPTIONS = [
+  { value: StudentGroup.NONE, label: 'ללא' },
+  { value: StudentGroup.SPECIAL, label: 'חיוך מיוחד' },
+  { value: StudentGroup.DIFFERENTIAL, label: 'דפרנציאלים' },
+  { value: StudentGroup.INTEGRATION, label: 'שילוב' },
+  { value: StudentGroup.GIFTED, label: 'מחוננים' }
+];
