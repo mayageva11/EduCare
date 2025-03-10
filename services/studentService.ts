@@ -523,6 +523,25 @@ class StudentService {
       return false;
     }
   };
+
+  updateStudentGroup = async (
+    studentId: string,
+    group: string
+  ): Promise<boolean> => {
+    try {
+      const response = await fetch(`/api/students/updateStudentGroup`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId, group })
+      });
+
+      if (!response.ok) throw new Error('Failed to update group');
+      return true;
+    } catch (error) {
+      console.error('Error updating group:', error);
+      return false;
+    }
+  };
 }
 
 export const studentService = new StudentService();
