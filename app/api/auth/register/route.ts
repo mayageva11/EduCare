@@ -110,8 +110,8 @@ export async function POST(request: NextRequest) {
       role: newUser.role || 'user'
     };
     
-    // Generate JWT token
-    const token = generateToken(tokenPayload);
+    // Generate JWT token - now async with jose
+    const token = await generateToken(tokenPayload);
 
     // Set HTTP-only cookie with token
     const cookieStore = await cookies();
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
       sameSite: 'strict',
     });
     
-    const userID = newUser._id;
+    const user = newUser._id;
 
     // Return success response
     return NextResponse.json(

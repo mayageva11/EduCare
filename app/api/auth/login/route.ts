@@ -38,8 +38,8 @@ export async function POST(request: NextRequest) {
       role: user_data.role || 'user',
     };
 
-    // Generate JWT token
-    const token = generateToken(tokenPayload);
+    // Generate JWT token - now async with jose
+    const token = await generateToken(tokenPayload);
 
     // Set HTTP-only cookie with token
     const cookieStore = await cookies();
