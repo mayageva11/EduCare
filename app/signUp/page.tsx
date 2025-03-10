@@ -1,13 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { User } from '@/types/users';
 import Button from '../../components/Button';
 import Input from '@/components/Input';
 import Navbar from '../../components/NavBar';
 import { authService } from '@/services/authService';
+import { useRouter } from "next/navigation";
+import { AuthContext } from "../context/AuthContext";
 
 export default function SignUpPage() {
+  const auth = useContext(AuthContext);
+  const router = useRouter();
+
   const navLinks = [
     { href: '/aboutUs', label: 'אודות' },
     { href: '/', label: 'התחברות' }
@@ -55,11 +60,12 @@ export default function SignUpPage() {
       
       const result = await authService.register(formData);
 
-      // Handle successful response
-      alert(result.message || 'נרשמת בהצלחה! החשבון שלך יאושר בקרוב');
-
-      // Redirect to login page
-      window.location.href = '/home';
+      if (result) {
+        alert(result.message || 'נרשמת בהצלחה! החשבון שלך יאושר בקרוב'); // Handle successful response
+        auth?.register(result.token, result.user); // Use AuthContext to store in localStorage
+        router.push("/home"); // Redirect after registration
+      }
+      
     } catch (error: any) {
       console.error('Signup error:', error);
       alert(error.message || 'אירעה שגיאה בתהליך ההרשמה');

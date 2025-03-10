@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'ההרשמה בוצעה בהצלחה! החשבון שלך יאושר לאחר בדיקת המסמכים',
         token,
-        userID,
+        user,
       },
       { status: 201 }
     );

@@ -1,28 +1,20 @@
-import { User, UserLogin } from '@/types/users';
+import { User, UserLogin } from "@/types/users";
+
 class AuthService {
   async login(credentials: UserLogin) {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
       });
 
       const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+        throw new Error(data.error || "Login failed");
       }
 
-      // Store token in localStorage if immediate login is desired
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userID', JSON.stringify(data.userID));
-      }
-
-      return data;
+      return data; // Return the token and user data
     } catch (error) {
       throw error;
     }
@@ -30,36 +22,25 @@ class AuthService {
 
   async register(userData: User) {
     try {
-
-      // Create FormData for file upload
       const formData = new FormData();
+      formData.append("firstName", userData.firstName);
+      formData.append("lastName", userData.lastName);
+      formData.append("email", userData.email);
+      formData.append("school", userData.school);
+      formData.append("password", userData.password);
+      formData.append("confirmPassword", userData.confirmPassword);
 
-      // Add text fields
-      formData.append('firstName', userData.firstName);
-      formData.append('lastName', userData.lastName);
-      formData.append('email', userData.email);
-      formData.append('school', userData.school);
-      formData.append('password', userData.password);
-      formData.append('confirmPassword', userData.confirmPassword);
-
-      // Send request
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        body: formData
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        body: formData,
       });
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
+        throw new Error(data.error || "Registration failed");
       }
 
-      // Store token in localStorage if immediate login is desired
-      if (data.token) {
-        localStorage.setItem('token', data.token);    
-        localStorage.setItem('userID', JSON.stringify(data.userID));
-      }
-      
-      return data;
+      return data; // Return the token and user data
     } catch (error) {
       throw error;
     }
@@ -67,11 +48,11 @@ class AuthService {
 
   async getProfile() {
     try {
-      const response = await fetch('/api/auth/getUser');
+      const response = await fetch("/api/auth/getUser");
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch user');
+        throw new Error(data.error || "Failed to fetch user");
       }
 
       return data.user;

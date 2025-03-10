@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '../components/NavBar';
@@ -8,8 +8,12 @@ import logoImage from '../assets/logo.png';
 import { authService } from '@/services/authService';
 import Button from '../components/Button';
 import Input from '@/components/Input';
+import { useRouter } from "next/navigation";
+import { AuthContext } from "./context/AuthContext";
 
 export default function LoginPage() {
+  const auth = useContext(AuthContext);
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -28,8 +32,11 @@ export default function LoginPage() {
 
     try {
       const result = await authService.login({ email, password });
-      console.log('Login successful:', result);
-      window.location.href = '/home';
+      if (result) {
+        console.log('Login successful:', result); // Handle successful response
+        auth?.login(result.token, result.user); // Use AuthContext to store in localStorage
+        router.push("/home"); // Redirect after registration
+      }
     } catch (error) {
       console.error('Login error:', error);
       setError(
