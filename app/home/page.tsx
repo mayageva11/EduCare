@@ -13,6 +13,7 @@ import TableHeaderCell from '@/components/TableHeaderCell';
 import AllTasksSection from '@/components/AllTasksSection';
 import { Task } from '@/types/tracking';
 import { taskService } from '@/services/taskService';
+import GoogleCalendarButton from '../../components/GoogleCalendarButton';
 
 export default function HomePage() {
   // State for data
@@ -90,6 +91,10 @@ export default function HomePage() {
   return (
     <>
       <Navbar links={navLinks} />
+
+      <div>
+          <GoogleCalendarButton />
+      </div>
 
       {/* Main Content */}
       <div className='max-w-7xl mx-auto px-6 py-8'>
