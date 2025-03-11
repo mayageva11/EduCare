@@ -9,6 +9,10 @@ import { reminderService, Reminder } from '@/services/reminderService';
 import { studentService, StudentStats } from '@/services/studentService';
 import { externalLinks } from '@/data/externalLinks';
 import { getTagColor, tagLabels } from '@/utils/colors';
+import TableHeaderCell from '@/components/TableHeaderCell';
+import AllTasksSection from '@/components/AllTasksSection';
+import { Task } from '@/types/tracking';
+import { taskService } from '@/services/taskService';
 
 export default function HomePage() {
   // State for data
@@ -21,9 +25,11 @@ export default function HomePage() {
     blue: 0,
     purple: 0
   });
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState({
     reminders: true,
-    stats: true
+    stats: true,
+    tasks: true
   });
 
   // Navigation links with dropdowns
@@ -67,9 +73,14 @@ export default function HomePage() {
         const statsData = await studentService.getStudentStats();
         setStatistics(statsData);
         setIsLoading(prev => ({ ...prev, stats: false }));
+        // Fetch all tasks
+        setIsLoading(prev => ({ ...prev, tasks: true }));
+        const tasksData = await taskService.getAllTasks();
+        setAllTasks(tasksData);
+        setIsLoading(prev => ({ ...prev, tasks: false }));
       } catch (error) {
         console.error('Error fetching data:', error);
-        setIsLoading({ reminders: false, stats: false });
+        setIsLoading({ reminders: false, stats: false, tasks: false });
       }
     };
 
@@ -100,18 +111,18 @@ export default function HomePage() {
               <table className='min-w-full divide-y divide-gray-200'>
                 <thead>
                   <tr>
-                    <th className='px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider'>
+                    <TableHeaderCell className='text-sm font-medium text-gray-600'>
                       תאריך
-                    </th>
-                    <th className='px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider'>
+                    </TableHeaderCell>
+                    <TableHeaderCell className='text-sm font-medium text-gray-600'>
                       שעה
-                    </th>
-                    <th className='px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider'>
+                    </TableHeaderCell>
+                    <TableHeaderCell className='text-sm font-medium text-gray-600'>
                       נושא
-                    </th>
-                    <th className='px-6 py-3 text-right text-sm font-medium text-gray-600 uppercase tracking-wider'>
+                    </TableHeaderCell>
+                    <TableHeaderCell className='text-sm font-medium text-gray-600'>
                       תלמיד/ה
-                    </th>
+                    </TableHeaderCell>
                   </tr>
                 </thead>
                 <tbody className='bg-white divide-y divide-gray-200'>
@@ -146,6 +157,9 @@ export default function HomePage() {
             </div>
           )}
         </div>
+        <div className='mb-10'>
+          <AllTasksSection tasks={allTasks} isLoading={isLoading.tasks} />
+        </div>
 
         {/* Statistics Section - עם דיאגרמת העוגה */}
         <div className='bg-white rounded-2xl shadow-xl p-8'>
@@ -161,10 +175,7 @@ export default function HomePage() {
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-10'>
               {/* דיאגרמת עוגה */}
               <div className='flex items-center justify-center'>
-                <PieChart
-                  statistics={statistics}
-                  totalStudents={totalStudents}
-                />
+                <PieChart statistics={statistics} totalStudents={0} />
               </div>
 
               {/* מקרא */}
@@ -180,10 +191,6 @@ export default function HomePage() {
                           ></div>
                           <span className='text-lg'>
                             {tagLabels[tag as keyof typeof tagLabels]}
-                          </span>
-                          <span className='mr-auto text-lg font-bold'>
-                            {count} תלמידים (
-                            {Math.round((count / totalStudents) * 100)}%)
                           </span>
                         </div>
                       )

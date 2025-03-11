@@ -1,22 +1,30 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import type { Student, StudentFormData } from '@/types/students';
+import {
+  GROUP_OPTIONS,
+  type Student,
+  type StudentFormData
+} from '@/types/students';
 import { studentService } from '@/services/studentService';
 import TableHeaderCell from '@/components/TableHeaderCell';
 import Button from '@/components/Button';
+import GroupFilter from '@/components/GroupFilter';
+import GroupColumn from '@/components/GroupColumn';
 
 const TrackingPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [groupFilter, setGroupFilter] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<StudentFormData>({
     firstName: '',
     lastName: '',
     grade: '',
     tags: [],
+    group: 'none',
     parent1Name: '',
     parent1Phone: '',
     parent2Name: '',
@@ -90,6 +98,9 @@ const TrackingPage: React.FC = () => {
       }
     });
   };
+  const handleGroupFilterChange = (group: string | null) => {
+    setGroupFilter(group);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,7 +161,12 @@ const TrackingPage: React.FC = () => {
 
   const filteredStudents = students.filter(student => {
     const fullName = `${student.firstName} ${student.lastName}`;
-    return fullName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = fullName
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesGroup = groupFilter === null || student.group === groupFilter;
+
+    return matchesSearch && matchesGroup;
   });
 
   const navigateToPersonalTracking = (studentId: string) => {
@@ -223,6 +239,11 @@ const TrackingPage: React.FC = () => {
               </div>
             </div>
           </div>
+          {/* Group Filter */}
+          <GroupFilter
+            activeFilter={groupFilter}
+            onFilterChange={handleGroupFilterChange}
+          />
 
           {/* Students Table */}
           <div className='bg-white rounded-2xl shadow-xl p-6 overflow-hidden'>
@@ -235,6 +256,7 @@ const TrackingPage: React.FC = () => {
                     <TableHeaderCell>כיתה</TableHeaderCell>
                     <TableHeaderCell>תגיות</TableHeaderCell>
                     <TableHeaderCell>פרטי הורים</TableHeaderCell>
+                    <TableHeaderCell>קבוצה</TableHeaderCell>
                     <TableHeaderCell>פעולות</TableHeaderCell>
                   </tr>
                 </thead>
@@ -491,6 +513,32 @@ const TrackingPage: React.FC = () => {
                           />
                         </div>
                       </div>
+                    </div>
+                  </div>
+                  {/* קבוצה */}
+                  <div className='mt-8'>
+                    <label className='block text-sm font-medium text-gray-700 mb-3'>
+                      בחירת קבוצה
+                    </label>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-2'>
+                      {GROUP_OPTIONS.map(option => (
+                        <div
+                          key={option.value}
+                          className={`flex items-center p-4 rounded-lg cursor-pointer transition-all ${
+                            formData.group === option.value
+                              ? 'bg-blue-100 border-2 border-blue-400'
+                              : 'bg-white border border-gray-200 hover:bg-gray-50'
+                          }`}
+                          onClick={() =>
+                            setFormData(prev => ({
+                              ...prev,
+                              group: option.value
+                            }))
+                          }
+                        >
+                          <span className='text-sm'>{option.label}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 

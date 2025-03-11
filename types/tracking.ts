@@ -1,36 +1,52 @@
-// types/student.ts
-export interface Parent {
-  name: string;
-  phone: string;
-}
-
 export interface Student {
-  _id?: string;
+  _id: string;
   firstName: string;
   lastName: string;
   grade: string;
   tags: string[];
   parents: Parent[];
-  counselorNotes?: string;
-  isOnMedication?: boolean;
-  medicationDetails?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date | string;
   group?: string;
 }
 
-export interface StudentFormData {
-  firstName: string;
-  lastName: string;
-  grade: string;
-  tags: string[];
-  parent1Name: string;
-  parent1Phone: string;
-  parent2Name: string;
-  parent2Phone: string;
+export interface Parent {
+  name: string;
+  phone: string;
+}
+
+// In types/tracking.ts
+export interface Task {
+  _id: string;
+  title: string;
+  startDate: string;
+  status: string;
+  priority?: string;
+  studentId?: string;
+  studentName?: string;
+  studentGrade?: string;
+  dueDate?: string;
+  description?: string;
+  notes: string;
+}
+
+export interface Form {
+  _id: string;
+  name: string;
+  createdAt: string;
+  editable: boolean;
+  fileUrl?: string;
+  fileName?: string;
+  fileType?: string;
+  status?: string;
+  studentId?: string;
   group?: string;
 }
 
+export interface TagOption {
+  value: string;
+  label: string;
+  color: string;
+}
 export enum StudentGroup {
   NONE = 'none', // ללא
   SPECIAL = 'special', // חיוך מיוחד

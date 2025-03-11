@@ -13,6 +13,7 @@
     "cookie": "^1.0.2",
     "jose": "^6.0.8",
     "jsonwebtoken": "^9.0.2",
+    "formidable": "^3.5.2",
     "mongoose": "^8.10.1",
     "next": "^15.1.7",
     "react": "^19.0.0",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/formidable": "^3.4.5",
     "@types/node": "^20.17.19",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
