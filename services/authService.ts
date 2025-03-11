@@ -48,7 +48,9 @@ class AuthService {
 
   async getProfile() {
     try {
-      const response = await fetch("/api/auth/getUser");
+      const response = await fetch("/api/auth/getUser", {
+        method: "GET",
+      });
       const data = await response.json();
 
       if (!response.ok) {

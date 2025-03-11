@@ -21,14 +21,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify the token
-    const decoded = verifyToken(token);
+    const decoded = await verifyToken(token);
     if (!decoded) {
       return NextResponse.json(
         { error: 'אסימון לא תקף' },
         { status: 401 }
       );
     }
-
     // Find user by ID
     const user = await User.findById(decoded.userId).select('-password');
     if (!user) {
