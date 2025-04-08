@@ -16,11 +16,13 @@ export default function GoogleCalendarButton() {
     // Create the Google OAuth URL with required scopes
     const scope = encodeURIComponent(googleConfig.scopes.join(' '));
     const redirectUri = encodeURIComponent(googleConfig.redirectUri);
-    
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleConfig.clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+    console.log(googleConfig.clientId);
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleConfig.clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&include_granted_scopes=true&prompt=consent`;
+
     
     // Redirect to Google's OAuth page
     window.location.href = authUrl;
+    console.log(googleConfig.clientId);
   };
 
   const openGoogleCalendar = () => {

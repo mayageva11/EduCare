@@ -92,10 +92,6 @@ export default function HomePage() {
     <>
       <Navbar links={navLinks} />
 
-      <div>
-          <GoogleCalendarButton />
-      </div>
-
       {/* Main Content */}
       <div className='max-w-7xl mx-auto px-6 py-8'>
         {/* קישורים חיצוניים */}

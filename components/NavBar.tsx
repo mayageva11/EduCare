@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import logoImage from '../assets/logo.png';
+import GoogleCalendarButton from './GoogleCalendarButton';
 
 interface DropdownItem {
   href: string;
@@ -95,6 +96,10 @@ export default function Navbar({ links }: NavbarProps) {
               )}
             </div>
           ))}
+
+          {/* Google Calendar Button */}
+          <GoogleCalendarButton />
+
         </div>
       </div>
     </nav>
