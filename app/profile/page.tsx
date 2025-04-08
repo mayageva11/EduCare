@@ -168,6 +168,12 @@ export default function ProfilePage() {
 
           </div>
 
+          <div className="mb-6 text-center">
+              <Button onClick={() => router.push('/editProfile')}>
+                עריכת בית ספר
+              </Button>
+          </div>
+
         </div>
       </div>
     </>

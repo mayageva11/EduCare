@@ -64,14 +64,6 @@ export async function middleware(request: NextRequest) {
 // This ensures middleware only runs on routes that aren't explicitly public
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for:
-     * - root (/)
-     * - login page (/login)
-     * - signup page (/signUp)
-     * - auth API endpoints (/api/auth/login and /api/auth/register)
-     * - static files (/_next/, /favicon.ico, etc.)
-     */
     '/((?!api/auth/login|api/auth/register|login|signUp|_next/|favicon\\.ico).*)',
   ],
 };

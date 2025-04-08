@@ -62,6 +62,25 @@ class AuthService {
       throw error;
     }
   }
+
+  async updateSchool(data: { school: string }) {
+    try{
+      const response = await fetch("/api/auth/update-school", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to update school");
+      }
+      return result;
+    } 
+    catch (error) {
+      throw error;
+    }
+  }
+
 }
 
 export const authService = new AuthService();
