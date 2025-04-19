@@ -1,3 +1,4 @@
+// Student-related types
 export interface Student {
   _id: string;
   firstName: string;
@@ -14,7 +15,19 @@ export interface Parent {
   phone: string;
 }
 
-// In types/tracking.ts
+export interface StudentFormData {
+  firstName: string;
+  lastName: string;
+  grade: string;
+  tags: string[];
+  group: string;
+  parent1Name: string;
+  parent1Phone: string;
+  parent2Name: string;
+  parent2Phone: string;
+}
+
+// Task-related types
 export interface Task {
   _id: string;
   title: string;
@@ -29,24 +42,35 @@ export interface Task {
   notes: string;
 }
 
-export interface Form {
-  _id: string;
-  name: string;
-  createdAt: string;
-  editable: boolean;
-  fileUrl?: string;
-  fileName?: string;
-  fileType?: string;
-  status?: string;
-  studentId?: string;
-  group?: string;
+// Form-related types
+// export interface Form {
+//   _id: string;
+//   formType?: string;
+//   name: string;
+//   createdAt: string;
+//   editable: boolean;
+//   fileUrl?: string;
+//   fileName?: string;
+//   fileType?: string;
+//   status?: string;
+//   studentId?: string;
+//   group?: string;
+// }
+
+export enum FormStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'inProgress',
+  COMPLETED = 'completed'
 }
 
+// Tag options
 export interface TagOption {
   value: string;
   label: string;
   color: string;
 }
+
+// Student groups
 export enum StudentGroup {
   NONE = 'none', // ללא
   SPECIAL = 'special', // חיוך מיוחד
@@ -62,3 +86,38 @@ export const GROUP_OPTIONS = [
   { value: StudentGroup.INTEGRATION, label: 'שילוב' },
   { value: StudentGroup.GIFTED, label: 'מחוננים' }
 ];
+
+// Form type interfaces
+export interface MeetingSummaryContent {
+  date: string;
+  participants: string[];
+  topics: string[];
+  decisions: string[];
+  nextSteps: string[];
+}
+
+export interface ConfidentialityWaiverContent {
+  studentName: string;
+  parentName: string;
+  institutions: string[];
+  validUntil: string;
+  restrictions: string;
+}
+
+export interface ParentConsentContent {
+  studentName: string;
+  parentName: string;
+  adjustments: string[];
+  date: string;
+}
+
+export interface TeacherQuestionnaireContent {
+  teacherName: string;
+  studentName: string;
+  academicPerformance: string;
+  behavior: string;
+  socialInteractions: string;
+  strengths: string;
+  challenges: string;
+  recommendations: string;
+}

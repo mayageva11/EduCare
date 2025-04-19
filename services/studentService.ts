@@ -1,5 +1,6 @@
 import { StudentFormData, Student } from '@/types/students';
-import { Form, Task } from '@/types/tracking';
+import { Task } from '@/types/tracking';
+import { Form, FormContent } from '@/types/form.types';
 
 export interface StudentStats {
   green: number; // לומד, מתפקד בבית ספר ואין בעיות
@@ -539,6 +540,209 @@ class StudentService {
       return true;
     } catch (error) {
       console.error('Error updating group:', error);
+      return false;
+    }
+  };
+
+  // Add these methods to your studentService.ts file
+
+  // Get functional report content
+  getFunctionalReport = async (formId: string): Promise<Form | null> => {
+    try {
+      const response = await fetch(
+        `/api/students/getFunctionalReport?formId=${formId}`
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          // If report doesn't exist yet return empty template
+          return {
+            _id: '',
+            createdAt: '',
+            editable: false,
+            name: '',
+            content: {
+              academicEvaluation: '',
+              behavioralEvaluation: {
+                emotionalEvaluation: '',
+                socialEvaluation: ''
+              }
+            }
+          };
+        }
+        throw new Error('Failed to fetch functional report');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching functional report:', error);
+      return null;
+    }
+  };
+
+  // Save functional report
+  saveFunctionalReport = async (
+    formId: string,
+    studentId: string,
+    name: string,
+    formType: string,
+    reportContent: FormContent
+  ): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/students/addFunctionalityForm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formId,
+          studentId,
+          name,
+          formType,
+          academicEvaluation: reportContent.academicEvaluation,
+          behavioralEvaluation: reportContent.behavioralEvaluation
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save functional report');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error saving functional report:', error);
+      return false;
+    }
+  };
+
+  // Download functional report as PDF
+  // Updated method for studentService.ts
+  downloadFunctionalReport = async (formId: string): Promise<void> => {
+    try {
+      console.log(`Downloading functional report with ID: ${formId}`);
+
+      // Use fetch for better error handling and blob handling
+      const response = await fetch(
+        `/api/students/downloadFunctionalReport?formId=${formId}`
+      );
+
+      if (!response.ok) {
+        console.error(`Download failed with status: ${response.status}`);
+        throw new Error(`Failed to download report (${response.status})`);
+      }
+
+      // Get the blob from the response
+      const blob = await response.blob();
+
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a link element
+      const link = document.createElement('a');
+      link.href = url;
+
+      // Get filename from Content-Disposition header or use default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'functional_report.pdf';
+
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = decodeURIComponent(filenameMatch[1]);
+        }
+      }
+
+      link.setAttribute('download', filename);
+
+      // Append to body
+      document.body.appendChild(link);
+
+      // Trigger click
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      console.log('Download completed successfully');
+    } catch (error) {
+      console.error('Error downloading functional report:', error);
+      alert(`שגיאה בהורדת הדו״ח: ${(error as Error).message}`);
+    }
+  };
+
+  // Edit functional report - separate from save
+  editFunctionalReport = async (
+    formId: string,
+    reportContent: FormContent
+  ): Promise<boolean> => {
+    try {
+      console.log(`Editing functional report for form ID: ${formId}`);
+      console.log('Report content to update:', reportContent);
+
+      const payload = {
+        formId,
+        content: {
+          academicEvaluation: reportContent.academicEvaluation,
+          behavioralEvaluation: reportContent.behavioralEvaluation
+        },
+        status: 'completed'
+      };
+
+      console.log('Sending edit payload:', payload);
+
+      const response = await fetch('/api/students/editForm', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      console.log('Edit response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = 'Failed to update functional report';
+
+        try {
+          const errorData = JSON.parse(errorText);
+          console.error('Server error response:', errorData);
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          console.error('Server returned non-JSON error:', errorText);
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      const result = await response.json();
+      console.log('Edit successful, result:', result);
+      return true;
+    } catch (error) {
+      console.error('Error updating functional report:', error);
+      alert(`שגיאה בעדכון דו״ח התפקוד: ${(error as Error).message}`);
+      return false;
+    }
+  };
+
+  // Delete form (reusing the existing deleteStudentForm method)
+  // This works for both regular forms and functionality forms
+  deleteForm = async (studentId: string, formId: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`/api/students/deleteForm`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentId,
+          formId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete form');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting form:', error);
       return false;
     }
   };

@@ -256,7 +256,6 @@ const TrackingPage: React.FC = () => {
                     <TableHeaderCell>כיתה</TableHeaderCell>
                     <TableHeaderCell>תגיות</TableHeaderCell>
                     <TableHeaderCell>פרטי הורים</TableHeaderCell>
-                    <TableHeaderCell>קבוצה</TableHeaderCell>
                     <TableHeaderCell>פעולות</TableHeaderCell>
                   </tr>
                 </thead>

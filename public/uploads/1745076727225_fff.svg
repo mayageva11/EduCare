@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <!-- Background Shape -->
+  <rect x="0" y="0" width="400" height="200" fill="#ffffff"/>
+  
+  <!-- Main Circle - representing unity and completeness -->
+  <circle cx="100" cy="100" r="60" fill="#2D5DA1" opacity="0.9"/>
+  
+  <!-- Smaller Circle - representing growth and development -->
+  <circle cx="150" cy="100" r="40" fill="#4A90E2" opacity="0.8"/>
+  
+  <!-- Text -->
+  <text x="220" y="90" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#2D5DA1">EduCare</text>
+  <text x="220" y="120" font-family="Arial, sans-serif" font-size="20" fill="#4A90E2">מערכת ייעוץ חינוכית</text>
+  
+  <!-- Decorative Elements -->
+  <path d="M200 130 h 160" stroke="#2D5DA1" stroke-width="2" opacity="0.3"/>
+  <path d="M200 135 h 140" stroke="#4A90E2" stroke-width="2" opacity="0.2"/>
+</svg>

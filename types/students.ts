@@ -1,3 +1,5 @@
+import { Form } from './form.types';
+
 // types/student.ts
 export interface Parent {
   name: string;
@@ -17,6 +19,7 @@ export interface Student {
   createdAt?: Date;
   updatedAt?: Date;
   group?: string;
+  forms?: Form[];
 }
 
 export interface StudentFormData {
@@ -30,6 +33,21 @@ export interface StudentFormData {
   parent2Phone: string;
   group?: string;
 }
+
+// Form-related types
+// export interface Form {
+//   _id: string;
+//   formType?: string;
+//   name: string;
+//   createdAt: string;
+//   editable: boolean;
+//   fileUrl?: string;
+//   fileName?: string;
+//   fileType?: string;
+//   status?: string;
+//   studentId?: string;
+//   group?: string;
+// }
 
 export enum StudentGroup {
   NONE = 'none', // ללא

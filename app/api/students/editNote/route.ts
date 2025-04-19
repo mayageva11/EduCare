@@ -14,19 +14,19 @@ export async function PUT(request: NextRequest) {
     }
 
     await connectDB();
+    const updatedStudent = await Student.findByIdAndUpdate(
+      studentId,
+      { counselorNotes: notes },
+      { new: true }
+    );
 
-    const student = await Student.findById(studentId);
-    if (!student) {
+    if (!updatedStudent) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 });
     }
 
-    // Update notes
-    student.counselorNotes = notes;
-    await student.save();
-
     return NextResponse.json({
       success: true,
-      notes: student.counselorNotes
+      notes: updatedStudent.counselorNotes
     });
   } catch (error) {
     console.error('Error updating notes:', error);
