@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 export enum FormStatus {
   PENDING = 'pending',
@@ -24,7 +24,7 @@ const formSchema = new mongoose.Schema(
     studentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Student',
-      required: [true, 'יש לשייך טופס לתלמיד']
+      default: null
     },
     fileUrl: {
       type: String,
@@ -49,6 +49,10 @@ const formSchema = new mongoose.Schema(
     updatedAt: {
       type: Date,
       default: Date.now
+    },
+    content: {
+      type: Schema.Types.Mixed,
+      default: {}
     }
   },
   {

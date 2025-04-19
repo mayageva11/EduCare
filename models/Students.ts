@@ -56,6 +56,7 @@ const studentSchema = new mongoose.Schema(
       enum: Object.values(StudentGroup),
       default: StudentGroup.NONE
     },
+    forms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }],
     counselorNotes: {
       type: String,
       default: ''

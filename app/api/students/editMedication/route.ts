@@ -14,21 +14,24 @@ export async function PUT(request: NextRequest) {
     }
 
     await connectDB();
+    // Use findByIdAndUpdate for more reliability
+    const updatedStudent = await Student.findByIdAndUpdate(
+      studentId,
+      {
+        isOnMedication: isOnMedication,
+        medicationDetails: details || ''
+      },
+      { new: true }
+    );
 
-    const student = await Student.findById(studentId);
-    if (!student) {
+    if (!updatedStudent) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 });
     }
 
-    // Update medication info
-    student.isOnMedication = isOnMedication;
-    student.medicationDetails = details || '';
-    await student.save();
-
     return NextResponse.json({
       success: true,
-      isOnMedication: student.isOnMedication,
-      details: student.medicationDetails
+      isOnMedication: updatedStudent.isOnMedication,
+      details: updatedStudent.medicationDetails
     });
   } catch (error) {
     console.error('Error updating medication info:', error);

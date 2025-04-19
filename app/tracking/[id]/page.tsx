@@ -13,10 +13,13 @@ import AddFormModal from '@/components/AddFormModal';
 import EditTagsModal from '@/components/EditTagsModal';
 import CounselorNotesSection from '@/components/CounselorNotesSection';
 import MedicationSection from '@/components/MedicationSection';
-import { Student, Task, Form, TagOption } from '@/types/tracking';
+import { Student, Task, TagOption } from '@/types/tracking';
 import { studentService } from '@/services/studentService';
 import EditStudentModal from '@/components/EditStudentModal';
 import GroupSection from '@/components/GroupSection';
+import FunctionalReportModal from '@/components/FunctionalReportModal';
+import ViewFunctionalityFormModal from '@/components/ViewFunctionalFormModal';
+import { FormContent, Form } from '@/types/form.types';
 
 // Available tag options
 const tagOptions: TagOption[] = [
@@ -53,13 +56,19 @@ export default function StudentPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [forms, setForms] = useState<Form[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isTagEditModalOpen, setIsTagEditModalOpen] = useState(false);
   const [isEditStudentModalOpen, setIsEditStudentModalOpen] = useState(false);
+  const [isFunctionalReportModalOpen, setIsFunctionalReportModalOpen] =
+    useState(false);
+  const [isViewFunctionalReportModalOpen, setIsViewFunctionalReportModalOpen] =
+    useState(false);
+  const [currentFormId, setCurrentFormId] = useState<string>('');
+  const [functionalReportData, setFunctionalReportData] =
+    useState<FormContent | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -210,22 +219,66 @@ export default function StudentPage() {
       alert('שגיאה במחיקת משימה');
     }
   };
-  // In your StudentPage component, add/update these handlers:
 
-  // Handle adding a new standard form
+  const handleAddFileForm = () => {
+    setIsFormModalOpen(true);
+  };
+
   const handleAddStandardForm = async (formType: string) => {
+    if (!student?._id) return;
+
     try {
-      if (!studentId) return;
+      let formName = 'טופס סטנדרטי';
 
-      const formData = { formType };
-      const newForm = await studentService.addStudentForm(studentId, formData);
+      // Set appropriate form name based on type
+      switch (formType) {
+        case 'functional_report':
+          formName = 'דו״ח תפקוד';
+          // Create the form first
+          const result = await studentService.addStudentForm(student._id, {
+            formType,
+            name: formName
+          });
 
-      if (newForm) {
-        setForms(prev => [...prev, newForm]);
+          if (result) {
+            // Add the form to the local state
+            setForms(prev => [...prev, result]);
+
+            // Set the current form ID and open the edit modal directly
+            setCurrentFormId(result._id);
+            setFunctionalReportData(null);
+
+            // Open the modal
+            setIsFunctionalReportModalOpen(true);
+          }
+          return; // Exit early since we've handled this case specially
+
+        case 'meeting_summary':
+          formName = 'סיכום פגישה';
+          break;
+        case 'confidentiality_waiver':
+          formName = 'ויתור סודיות';
+          break;
+        case 'parent_consent':
+          formName = 'הסכמת הורים להיבחנות מותאמת';
+          break;
+        case 'teacher_questionnaire':
+          formName = 'שאלון מחנכת';
+          break;
+      }
+
+      // For other form types, just create the form without opening a modal
+      const result = await studentService.addStudentForm(student._id, {
+        formType,
+        name: formName
+      });
+
+      if (result) {
+        setForms(prev => [...prev, result]);
       }
     } catch (error) {
-      console.error('Error adding form:', error);
-      alert('שגיאה בהוספת טופס');
+      console.error('Error adding standard form:', error);
+      alert('שגיאה בהוספת הטופס');
     }
   };
 
@@ -263,6 +316,80 @@ export default function StudentPage() {
     } catch (error) {
       console.error('Error deleting form:', error);
       alert('שגיאה במחיקת טופס');
+    }
+  };
+  // Handle functional report view
+  const handleEditFunctionalReport = async (formId: string) => {
+    // If parent component provided a handler, use it
+    if (handleEditFunctionalReport) {
+      handleEditFunctionalReport(formId);
+      return;
+    }
+
+    // Local implementation...
+    try {
+      setCurrentFormId(formId);
+      const reportData = await studentService.getFunctionalReport(formId);
+
+      if (reportData) {
+        setFunctionalReportData(reportData?.content || null);
+      } else {
+        // Initialize with empty data if not found
+        setFunctionalReportData(null);
+      }
+
+      setIsViewFunctionalReportModalOpen(false);
+      setIsFunctionalReportModalOpen(true);
+    } catch (error) {
+      console.error('Error loading functional report for edit:', error);
+      alert('שגיאה בטעינת דו״ח התפקוד לעריכה');
+    }
+  };
+  const handleSaveFunctionalReport = async (reportContent: FormContent) => {
+    try {
+      const name = 'דו״ח תפקוד';
+      const formType = 'functional_report';
+      const success = await studentService.saveFunctionalReport(
+        currentFormId,
+        studentId,
+        name,
+        formType,
+        reportContent
+      );
+
+      if (success) {
+        setIsFunctionalReportModalOpen(false);
+
+        // Update the form status in the local state
+        setForms(prev =>
+          prev.map(form => {
+            if (form._id === currentFormId) {
+              return { ...form, status: 'completed' };
+            }
+            return form;
+          })
+        );
+
+        alert('דו״ח התפקוד נשמר בהצלחה');
+      } else {
+        alert('שגיאה בשמירת דו״ח התפקוד');
+      }
+    } catch (error) {
+      console.error('Error saving functional report:', error);
+      alert('שגיאה בשמירת דו״ח התפקוד');
+    }
+  };
+  const handleDownloadFunctionalReport = () => {
+    // console.log('Download button clicked, formId:', currentFormId);
+    // if (!currentFormId) {
+    //   console.error('No form ID available for download');
+    //   alert('שגיאה: מזהה הטופס חסר');
+    //   return;
+    // }
+
+    // Try the alternative fetch method which has better error reporting
+    if (currentFormId) {
+      studentService.downloadFunctionalReport(currentFormId);
     }
   };
 
@@ -344,15 +471,43 @@ export default function StudentPage() {
       <>
         <FormsSection
           forms={forms}
-          onAddForm={() => setIsFormModalOpen(true)}
+          onAddForm={handleAddFileForm}
           onDeleteForm={handleDeleteForm}
           onAddStandardForm={handleAddStandardForm}
+          studentId={student._id}
+          studentName={`${student.firstName} ${student.lastName}`}
+          onSaveFunctionalReport={handleSaveFunctionalReport}
+          onEditFunctionalReport={handleEditFunctionalReport}
+          onDownloadFunctionalReport={handleDownloadFunctionalReport}
         />
 
         {isFormModalOpen && (
           <AddFormModal
             onClose={() => setIsFormModalOpen(false)}
             onAddForm={handleAddForm}
+          />
+        )}
+
+        {/* Make sure these modals are properly connected */}
+        {isFunctionalReportModalOpen && (
+          <FunctionalReportModal
+            isOpen={isFunctionalReportModalOpen}
+            onClose={() => setIsFunctionalReportModalOpen(false)}
+            onSave={handleSaveFunctionalReport}
+            studentName={`${student.firstName} ${student.lastName}`}
+          />
+        )}
+
+        {isViewFunctionalReportModalOpen && (
+          <ViewFunctionalityFormModal
+            isOpen={isViewFunctionalReportModalOpen}
+            onClose={() => setIsViewFunctionalReportModalOpen(false)}
+            data={functionalReportData}
+            studentName={`${student.firstName} ${student.lastName}`}
+            onDownload={handleDownloadFunctionalReport}
+            onEdit={() => handleEditFunctionalReport(currentFormId)}
+            canEdit={true}
+            form={forms.find(f => f._id === currentFormId)}
           />
         )}
       </>
