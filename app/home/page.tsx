@@ -13,6 +13,7 @@ import TableHeaderCell from '@/components/TableHeaderCell';
 import AllTasksSection from '@/components/AllTasksSection';
 import { Task } from '@/types/tracking';
 import { taskService } from '@/services/taskService';
+import GoogleCalendarButton from '../../components/GoogleCalendarButton';
 
 export default function HomePage() {
   // State for data

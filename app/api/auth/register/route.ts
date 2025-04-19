@@ -4,12 +4,14 @@ import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 import { writeFile } from 'fs/promises';
 import path from 'path';
+import { generateToken } from '@/lib/jwt';
+import { cookies } from 'next/headers';
 
 export async function POST(request: NextRequest) {
   try {
     // Connect to database
     await connectDB();
-
+    
     // Get form data
     const formData = await request.formData();
 
@@ -20,6 +22,7 @@ export async function POST(request: NextRequest) {
     const school = formData.get('school') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
+    const certificateFile = formData.get('certificate') as File | null;
 
     // Validate required fields
     if (
@@ -53,6 +56,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Handle certificate file upload
+    let certificateUrl = '';
+    if (certificateFile) {
+      // Convert file to buffer
+      const bytes = await certificateFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      // Define upload directory
+      const uploadDir = path.join(process.cwd(), 'public/uploads');
+
+      // Ensure directory exists
+      const fs = require('fs');
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      // Generate unique filename
+      const uniqueFilename = `${Date.now()}-${certificateFile.name.replace(
+        /\s+/g,
+        '-'
+      )}`;
+      const filePath = path.join(uploadDir, uniqueFilename);
+
+      // Save file
+      await writeFile(filePath, buffer);
+      certificateUrl = `/uploads/${uniqueFilename}`;
+    }
+
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -64,17 +95,45 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       school,
+      certificateUrl, // Save the certificate URL in the database
       isVerified: false // User needs to be verified by admin
     });
 
     // Save user to database
     await newUser.save();
+  
+    // Create token payload
+    const tokenPayload = {
+      userId: newUser._id.toString(),
+      name: newUser.firstName, // Fixed incorrect field reference
+      email: newUser.email,
+      role: newUser.role || 'user'
+    };
+    
+    // Generate JWT token - now async with jose
+    const token = await generateToken(tokenPayload);
+
+    // Set HTTP-only cookie with token
+    const cookieStore = await cookies();
+    cookieStore.set({
+      name: 'auth_token',
+      value: token,
+      httpOnly: true,
+      path: '/',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
+      sameSite: 'strict',
+    });
+    
+    const user = newUser._id;
 
     // Return success response
     return NextResponse.json(
       {
         success: true,
-        message: 'ההרשמה בוצעה בהצלחה! החשבון שלך יאושר לאחר בדיקת המסמכים'
+        message: 'ההרשמה בוצעה בהצלחה! החשבון שלך יאושר לאחר בדיקת המסמכים',
+        token,
+        user,
       },
       { status: 201 }
     );
